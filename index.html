@@ -92,13 +92,59 @@ td:active{opacity:.7}
 .bex{background:var(--brd);color:var(--tx);font-size:13px}
 .btn:active{opacity:.75}
 #descs{display:none}
+
+/* === Dynamic calendar ============================================= */
+tr.cur-week .wk-cell{border-left:2.5px solid #1D9E75}
+tr.cur-week .wkl{color:#1D9E75}
+.dagbok-anchor-btn{background:none;border:.5px solid var(--brd);border-radius:8px;cursor:pointer;font-size:11px;color:var(--mu);padding:3px 8px;white-space:nowrap}
+.dagbok-anchor-btn:active{opacity:.7}
+/* === Treningsdagbok ================================================ */
+#dagbok{padding:0 16px 48px;margin-top:4px}
+.dagbok-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 0 12px;border-top:.5px solid var(--brd)}
+.dagbok-htitle{font-size:15px;font-weight:600;color:var(--tx)}
+.dagbok-ctrl{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.dagbok-lbl{font-size:12px;color:var(--mu)}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.stat-card{background:var(--sur);border-radius:10px;padding:10px 12px}
+.sc-lbl{font-size:10px;color:var(--mu);margin-bottom:5px}
+.sc-val{font-size:20px;font-weight:600;color:var(--tx);line-height:1}
+.sc-unit{font-size:11px;font-weight:400;color:var(--mu);margin-left:2px}
+.sc-note{font-size:9px;color:var(--hi);margin-top:3px}
+.sc-kne-inner{display:flex;gap:8px;align-items:flex-end;margin-top:2px}
+.sc-kne-inner>div:not(.sc-kne-div){flex:1}
+.sc-kne-div{width:.5px;background:var(--brd);align-self:stretch;flex-shrink:0}
+.sc-kne-sub{font-size:9px;color:var(--hi);margin-bottom:2px}
+.sc-val-sm{font-size:15px;font-weight:600;color:var(--tx);line-height:1}
+.hw-group{margin-bottom:16px}
+.hw-head{font-size:10px;font-weight:500;color:var(--mu);margin-bottom:8px;display:flex;gap:6px}
+.hw-head span{color:var(--hi);font-weight:400}
+.hw-sessions{display:flex;gap:5px;flex-wrap:wrap}
+.hs-card{border-radius:8px;padding:7px 9px;min-width:68px;cursor:pointer}
+.hs-card:active{opacity:.7}
+.hc-day{font-size:9px;color:inherit;opacity:.65;margin-bottom:2px}
+.hc-title{font-size:11px;font-weight:500;line-height:1.3;margin-bottom:2px}
+.hc-meta{font-size:9px;opacity:.7;line-height:1.3}
+.hc-note{font-size:9px;margin-top:3px;padding:1px 5px;border-radius:3px;background:rgba(128,128,128,.12);display:inline-block;color:inherit;opacity:.8}
+.hs-gym{background:var(--gym-b);color:var(--gym-f)}
+.hs-qual{background:var(--qual-b);color:var(--qual-f)}
+.hs-cycle{background:var(--cyc-b);color:var(--cyc-f)}
+.hs-yoga{background:var(--yoga-b);color:var(--yoga-f)}
+.hs-long{background:var(--long-b);color:var(--long-f)}
+.hs-rest{background:var(--rst-b);color:var(--rst-f)}
+.dagbok-empty{font-size:13px;color:var(--hi);padding:24px 0;text-align:center}
+.yr-table{width:100%;border-collapse:collapse;font-size:11px}
+.yr-table th{text-align:right;padding:0 0 8px 8px;font-size:10px;font-weight:500;color:var(--mu);border-bottom:.5px solid var(--brd)}
+.yr-table th:first-child{text-align:left;padding-left:0;width:60px}
+.yr-table td{text-align:right;padding:8px 0 8px 8px;border-bottom:.5px solid var(--brd);color:var(--mu)}
+.yr-table td:first-child{text-align:left;padding-left:0;font-weight:500;color:var(--tx)}
+.yr-table tfoot td{font-weight:600;color:var(--tx);border-top:.5px solid var(--brd);border-bottom:none;padding-top:10px}
 </style>
 </head>
 <body>
 <div id="app">
   <header>
-    <h1>Treningsprogram 2026 <span style="font-size:9px;font-weight:400;opacity:.45;margin-left:4px;">oppdatert 2. jun</span></h1>
-    <div id="hdr-day"></div>
+    <h1>Treningsprogram 2026</h1>
+    <button class="dagbok-anchor-btn" onclick="document.getElementById('dagbok').scrollIntoView({behavior:'smooth'})">Dagbok ↓</button><div id="hdr-day"></div>
   </header>
   <div id="cal-wrap">
     <table>
@@ -107,98 +153,7 @@ td:active{opacity:.7}
         <th>Man</th><th>Tir</th><th>Ons</th>
         <th>Tor</th><th>Fre</th><th>Lør</th><th>Sun</th>
       </tr></thead>
-      <tbody>
-<tr>
-<td class="wk-cell"><div class="wkl">1.–7. jun</div><div class="wks">Inneverande veke</div></td>
-<td class="t-rest" data-date="2026-06-01" onclick="openSheet('2026-06-01')"><div class="l1">Kvile ✓</div></td>
-<td class="t-qual" data-date="2026-06-02" onclick="openSheet('2026-06-02')"><div class="l1">🏃🏼‍♂️‍➡️ 20×400m @3:42–3:48</div><div class="l2">p:45sek / Sone 3–4</div></td>
-<td class="t-gym" data-date="2026-06-03" onclick="openSheet('2026-06-03')"><div class="l1">💪🏼 BS 5×5 @170 kg</div><div class="l2">EMOM15: 8 PU / 8 Bench @100</div></td>
-<td class="t-yoga" data-date="2026-06-04" onclick="openSheet('2026-06-04')"><div class="l1">🧘🏼 Yoga / mob</div></td>
-<td class="t-rest" data-date="2026-06-05" onclick="openSheet('2026-06-05')"><div class="l1">Kvile / reise</div></td>
-<td class="t-gym" data-date="2026-06-06" onclick="openSheet('2026-06-06')"><div class="l1">💪🏼 BS 4-3-2-1 → 185 kg</div><div class="l2">Bench 3×5 @110 + Erg 3×5min</div></td>
-<td class="t-qual" data-date="2026-06-07" onclick="openSheet('2026-06-07')"><div class="l1">🏃🏼‍♂️‍➡️ Roleg jogg/erg</div><div class="l2">40 min Sone 1</div></td>
-</tr>
-<tr>
-<td class="wk-cell"><div class="wkl">8.–14. jun</div><div class="wks">Taper + reise</div></td>
-<td class="t-rest" data-date="2026-06-08" onclick="openSheet('2026-06-08')"><div class="l1">Reisedag Oslo</div><div class="l2">lett jogg 25 min</div></td>
-<td class="t-qual" data-date="2026-06-09" onclick="openSheet('2026-06-09')"><div class="l1">🏃🏼‍♂️‍➡️ Hotel: jogg 30 min</div><div class="l2">lett bench + PU</div></td>
-<td class="t-qual" data-date="2026-06-10" onclick="openSheet('2026-06-10')"><div class="l1">🏃🏼‍♂️‍➡️ Hotel: jogg 30 min</div><div class="l2">lett bench + PU</div></td>
-<td class="t-rest" data-date="2026-06-11" onclick="openSheet('2026-06-11')"><div class="l1">Reisedag</div><div class="l2">jogg / kvile</div></td>
-<td class="t-rest" data-date="2026-06-12" onclick="openSheet('2026-06-12')"><div class="l1">KVILE</div><div class="l2">reise + fest</div></td>
-<td class="t-qual" data-date="2026-06-13" onclick="openSheet('2026-06-13')"><div class="l1">🏃🏼‍♂️‍➡️ Langtur 22 km</div><div class="l2">Sone 1 (&lt;133 bpm)</div></td>
-<td class="t-rest" data-date="2026-06-14" onclick="openSheet('2026-06-14')"><div class="l1">Full kvile</div></td>
-</tr>
-<tr>
-<td class="wk-cell"><div class="wkl">15.–21. jun</div><div class="wks">Test + gjenopphenting</div></td>
-<td class="t-qual" data-date="2026-06-15" onclick="openSheet('2026-06-15')"><div class="l1">🏃🏼‍♂️‍➡️ Aktivering 25 min</div><div class="l2">4×100m strides</div></td>
-<td class="t-rest" data-date="2026-06-16" onclick="openSheet('2026-06-16')"><div class="l1">KVILE</div></td>
-<td class="t-qual" data-date="2026-06-17" onclick="openSheet('2026-06-17')"><div class="l1">🏃🏼‍♂️‍➡️ ★ 3000M TEST</div><div class="l2">mål: 11:00–11:15</div></td>
-<td class="t-yoga" data-date="2026-06-18" onclick="openSheet('2026-06-18')"><div class="l1">🧘🏼 Recovery</div><div class="l2">yoga / gange</div></td>
-<td class="t-qual" data-date="2026-06-19" onclick="openSheet('2026-06-19')"><div class="l1">🏃🏼‍♂️‍➡️ Lett jogg 25 min</div><div class="l2">+ lett bench/PU</div></td>
-<td class="t-cycle" data-date="2026-06-20" onclick="openSheet('2026-06-20')"><div class="l1">🚴🏼 Sykkel 50 km</div><div class="l2">/ jogg 12 km Sone 1</div></td>
-<td class="t-rest" data-date="2026-06-21" onclick="openSheet('2026-06-21')"><div class="l1">Aktiv kvile</div></td>
-</tr>
-<tr>
-<td class="wk-cell"><div class="wkl">22.–28. jun</div><div class="wks">V1 — Restart</div></td>
-<td class="t-gym" data-date="2026-06-22" onclick="openSheet('2026-06-22')"><div class="l1">💪🏼 BS 5×5 @167,5 kg</div><div class="l2">EMOM15: 8 PU / 8 Bench @95</div></td>
-<td class="t-qual" data-date="2026-06-23" onclick="openSheet('2026-06-23')"><div class="l1">🏃🏼‍♂️‍➡️ Lett jogg 35 min</div><div class="l2">Sone 1</div></td>
-<td class="t-qual" data-date="2026-06-24" onclick="openSheet('2026-06-24')"><div class="l1">🏃🏼‍♂️‍➡️ 6×4 min @4:12–4:18</div><div class="l2">p:2 min / Sone 3–4</div></td>
-<td class="t-yoga" data-date="2026-06-25" onclick="openSheet('2026-06-25')"><div class="l1">🧘🏼 Yoga / mob</div></td>
-<td class="t-gym" data-date="2026-06-26" onclick="openSheet('2026-06-26')"><div class="l1">💪🏼 BS 4-3-2-1 → 185 kg</div><div class="l2">Bench 4×5 @110 + PU ×maks</div></td>
-<td class="t-cycle" data-date="2026-06-27" onclick="openSheet('2026-06-27')"><div class="l1">🚴🏼 Gravel 80–100 km</div><div class="l2">Sone 1–3</div></td>
-<td class="t-qual" data-date="2026-06-28" onclick="openSheet('2026-06-28')"><div class="l1">🏃🏼‍♂️‍➡️ Langjogg 18–20 km</div><div class="l2">Sone 1–2</div></td>
-</tr>
-<tr>
-<td class="wk-cell"><div class="wkl">29 jun–5 jul</div><div class="wks">V2 — Bygging</div></td>
-<td class="t-gym" data-date="2026-06-29" onclick="openSheet('2026-06-29')"><div class="l1">💪🏼 BS 5×5 @170 kg</div><div class="l2">EMOM15: 8 PU / 8 Bench @100</div></td>
-<td class="t-qual" data-date="2026-06-30" onclick="openSheet('2026-06-30')"><div class="l1">🏃🏼‍♂️‍➡️ 10×1000m @4:08–4:12</div><div class="l2">p:1 min / Sone 3–4</div></td>
-<td class="t-qual" data-date="2026-07-01" onclick="openSheet('2026-07-01')"><div class="l1">🏃🏼‍♂️‍➡️ Lett jogg 30 min</div><div class="l2">Sone 1</div></td>
-<td class="t-yoga" data-date="2026-07-02" onclick="openSheet('2026-07-02')"><div class="l1">🧘🏼 Yoga / mob</div></td>
-<td class="t-gym" data-date="2026-07-03" onclick="openSheet('2026-07-03')"><div class="l1">💪🏼 BS 4-3-2-1 → 190 kg</div><div class="l2">Bench 4×5 @112,5 + PU ×maks</div></td>
-<td class="t-cycle" data-date="2026-07-04" onclick="openSheet('2026-07-04')"><div class="l1">🚴🏼 Gravel 100–120 km</div><div class="l2">Sone 2</div></td>
-<td class="t-qual" data-date="2026-07-05" onclick="openSheet('2026-07-05')"><div class="l1">🏃🏼‍♂️‍➡️ Langjogg 22 km</div><div class="l2">S1–2 m/terreng</div></td>
-</tr>
-<tr>
-<td class="wk-cell"><div class="wkl">6.–12. jul</div><div class="wks">V3 — Hardanger-prep</div></td>
-<td class="t-gym" data-date="2026-07-06" onclick="openSheet('2026-07-06')"><div class="l1">💪🏼 BS 5×5 @172,5 kg</div><div class="l2">EMOM15: 8 PU / 8 Bench @102,5</div></td>
-<td class="t-qual" data-date="2026-07-07" onclick="openSheet('2026-07-07')"><div class="l1">🏃🏼‍♂️‍➡️ 5×8 min @4:10–4:15</div><div class="l2">p:2 min / Sone 3–4</div></td>
-<td class="t-rest" data-date="2026-07-08" onclick="openSheet('2026-07-08')"><div class="l1">Aktiv kvile</div></td>
-<td class="t-yoga" data-date="2026-07-09" onclick="openSheet('2026-07-09')"><div class="l1">🧘🏼 Yoga / mob</div></td>
-<td class="t-gym" data-date="2026-07-10" onclick="openSheet('2026-07-10')"><div class="l1">💪🏼 BS 4-3-2-1 → 192,5 kg</div><div class="l2">Bench 4×5 @115 + PU ×maks</div></td>
-<td class="t-qual" data-date="2026-07-11" onclick="openSheet('2026-07-11')"><div class="l1">🏃🏼‍♂️‍➡️ Terrengjogg 25 km</div><div class="l2">m/sekk 6 kg / Sone 1–2</div></td>
-<td class="t-cycle" data-date="2026-07-12" onclick="openSheet('2026-07-12')"><div class="l1">🚴🏼 Gravel 70 km</div><div class="l2">Sone 1–2</div></td>
-</tr>
-<tr>
-<td class="wk-cell"><div class="wkl">13.–19. jul</div><div class="wks">V4 — Siste harde veke</div></td>
-<td class="t-gym" data-date="2026-07-13" onclick="openSheet('2026-07-13')"><div class="l1">💪🏼 BS 5×5 @175 kg</div><div class="l2">EMOM15: 8 PU / 8 Bench @105</div></td>
-<td class="t-qual" data-date="2026-07-14" onclick="openSheet('2026-07-14')"><div class="l1">🏃🏼‍♂️‍➡️ 3×3000m @4:00–4:05</div><div class="l2">p:3 min / Sone 4</div></td>
-<td class="t-rest" data-date="2026-07-15" onclick="openSheet('2026-07-15')"><div class="l1">Aktiv kvile</div></td>
-<td class="t-yoga" data-date="2026-07-16" onclick="openSheet('2026-07-16')"><div class="l1">🧘🏼 Yoga</div><div class="l2">start nedtrapping</div></td>
-<td class="t-gym" data-date="2026-07-17" onclick="openSheet('2026-07-17')"><div class="l1">💪🏼 BS 3×3 @165 kg</div><div class="l2">Bench 3×5 @100 + PU lett</div></td>
-<td class="t-qual" data-date="2026-07-18" onclick="openSheet('2026-07-18')"><div class="l1">🏃🏼‍♂️‍➡️ Terrengjogg 20 km</div><div class="l2">m/sekk 8 kg / Sone 1–2</div></td>
-<td class="t-cycle" data-date="2026-07-19" onclick="openSheet('2026-07-19')"><div class="l1">🚴🏼 Gravel 40–50 km</div><div class="l2">Sone 1</div></td>
-</tr>
-<tr>
-<td class="wk-cell"><div class="wkl">20.–26. jul</div><div class="wks">Taper</div></td>
-<td class="t-gym" data-date="2026-07-20" onclick="openSheet('2026-07-20')"><div class="l1">💪🏼 BS 3×5 @155 kg</div><div class="l2">E2OM10: 8 PU / 5 Bench @95</div></td>
-<td class="t-qual" data-date="2026-07-21" onclick="openSheet('2026-07-21')"><div class="l1">🏃🏼‍♂️‍➡️ 4×3 min @4:10</div><div class="l2">p:2 min + strides / Sone 3</div></td>
-<td class="t-cycle" data-date="2026-07-22" onclick="openSheet('2026-07-22')"><div class="l1">🚴🏼 Lett sykkel 30 min</div><div class="l2">aktiv kvile</div></td>
-<td class="t-yoga" data-date="2026-07-23" onclick="openSheet('2026-07-23')"><div class="l1">🧘🏼 Yoga / mob</div></td>
-<td class="t-qual" data-date="2026-07-24" onclick="openSheet('2026-07-24')"><div class="l1">🏃🏼‍♂️‍➡️ Lett jogg 20 min</div></td>
-<td class="t-qual" data-date="2026-07-25" onclick="openSheet('2026-07-25')"><div class="l1">🏃🏼‍♂️‍➡️ Fjelltur 15 km</div><div class="l2">m/sekk Sone 1</div></td>
-<td class="t-rest" data-date="2026-07-26" onclick="openSheet('2026-07-26')"><div class="l1">KVILE</div></td>
-</tr>
-<tr>
-<td class="wk-cell"><div class="wkl">27 jul–1 aug</div><div class="wks">Event!</div></td>
-<td class="t-qual" data-date="2026-07-27" onclick="openSheet('2026-07-27')"><div class="l1">🏃🏼‍♂️‍➡️ Lett jogg 20 min</div><div class="l2">aktiv kvile</div></td>
-<td class="t-yoga" data-date="2026-07-28" onclick="openSheet('2026-07-28')"><div class="l1">🧘🏼 Yoga / pakking</div></td>
-<td class="t-rest" data-date="2026-07-29" onclick="openSheet('2026-07-29')"><div class="l1">Reise til start</div><div class="l2">kvile</div></td>
-<td class="t-qual" data-date="2026-07-30" onclick="openSheet('2026-07-30')"><div class="l1">🏃🏼‍♂️‍➡️ HARDANGERVIDDA</div><div class="l2">DAG 1 — 30. jul</div></td>
-<td class="t-qual" data-date="2026-07-31" onclick="openSheet('2026-07-31')"><div class="l1">🏃🏼‍♂️‍➡️ HARDANGERVIDDA</div><div class="l2">DAG 2 — 31. jul</div></td>
-<td class="t-qual" data-date="2026-08-01" onclick="openSheet('2026-08-01')"><div class="l1">🏃🏼‍♂️‍➡️ HARDANGERVIDDA</div><div class="l2">DAG 3 — 1. aug</div></td>
-<td class="t-rest" data-date="2026-08-02" onclick="openSheet('2026-08-02')"><div class="l1">Kvile etter event</div></td>
-</tr>
-      </tbody>
+      <tbody id="cal-body"></tbody>
     </table>
   </div>
   <div id="legend">
@@ -208,6 +163,33 @@ td:active{opacity:.7}
     <span><span class="ld t-yoga"></span>🧘🏼 Yoga/mob</span>
     <span><span class="ld t-rest"></span>Kvile</span>
   </div>
+</div>
+
+<div id="dagbok">
+  <div class="dagbok-hdr">
+    <span class="dagbok-htitle">Treningsdagbok</span>
+  </div>
+  <div class="dagbok-ctrl">
+    <label for="dagbok-period" class="dagbok-lbl">Periode</label>
+    <select id="dagbok-period"></select>
+  </div>
+  <div id="dagbok-stats" class="stat-grid">
+    <div class="stat-card"><div class="sc-lbl">Km løping</div><div class="sc-val" id="sc-run-v">—</div></div>
+    <div class="stat-card"><div class="sc-lbl">Km sykling</div><div class="sc-val" id="sc-cyc-v">—</div><div class="sc-note" id="sc-cyc-note"></div></div>
+    <div class="stat-card"><div class="sc-lbl">SkiErg + RowErg</div><div class="sc-val" id="sc-erg-v">—</div></div>
+    <div class="stat-card">
+      <div class="sc-lbl">Knebøy</div>
+      <div class="sc-kne-inner">
+        <div><div class="sc-kne-sub">Maks</div><div class="sc-val" id="sc-kne-max">—</div></div>
+        <div class="sc-kne-div"></div>
+        <div><div class="sc-kne-sub">Totalt</div><div class="sc-val-sm" id="sc-kne-tot">—</div></div>
+      </div>
+    </div>
+    <div class="stat-card"><div class="sc-lbl">Øvrig</div><div class="sc-val" id="sc-other-v">—</div></div>
+    <div class="stat-card"><div class="sc-lbl">Logga økter</div><div class="sc-val" id="sc-total-v">0</div></div>
+  </div>
+  <div id="dagbok-monthly" class="dagbok-view"></div>
+  <div id="dagbok-yearly" class="dagbok-view"></div>
 </div>
 
 <div id="overlay" onclick="closeSheet()"></div>
@@ -386,7 +368,7 @@ if(todayCell) {
   todayCell.classList.add('today-ring');
   const todayDay = DAYS.find(d=>d[0]===today);
   if(todayDay) document.getElementById('hdr-day').textContent = todayDay[2];
-  setTimeout(()=>todayCell.scrollIntoView({behavior:'smooth',block:'center',inline:'center'}),400);
+  // Scroll after buildCalendar() below
 }
 
 // ── Restore logged marks ──────────────────────────────────────────────────
@@ -480,6 +462,236 @@ function exportICS(){
   document.body.appendChild(a);a.click();
   setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
 }
+// ── ISO week ──────────────────────────────────────────────────────
+function getISOWeek(date){
+  const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
+  const dn=d.getUTCDay()||7;
+  d.setUTCDate(d.getUTCDate()+4-dn);
+  const ys=new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d-ys)/86400000)+1)/7);
+}
+// ── Week range ────────────────────────────────────────────────────
+function fmtWkRange(mon,sun){
+  const d1=mon.getDate(),d2=sun.getDate();
+  const m1=MONTHS[mon.getMonth()],m2=MONTHS[sun.getMonth()];
+  return mon.getMonth()===sun.getMonth()?d1+'.\u2013'+d2+'. '+m1:d1+'. '+m1+'\u2013'+d2+'. '+m2;
+}
+// ── Build dynamic calendar ─────────────────────────────────────────
+function buildCalendar(){
+  const tbody=document.getElementById('cal-body');
+  if(!tbody)return;
+  tbody.innerHTML='';
+  const now=new Date();now.setHours(0,0,0,0);
+  const weeks=[];
+  for(let i=0;i<DAYS.length;i+=7) weeks.push(DAYS.slice(i,Math.min(i+7,DAYS.length)));
+  let shown=0;
+  for(const week of weeks){
+    const sun=new Date(week[week.length-1][0]);sun.setHours(23,59,59,999);
+    if(sun<now) continue;
+    if(shown>=8) break;
+    const mon=new Date(week[0][0]);
+    const isCur=mon<=now&&now<=sun;
+    const isoW=getISOWeek(mon);
+    const sunD=new Date(week[week.length-1][0]);
+    const tr=document.createElement('tr');
+    if(isCur) tr.classList.add('cur-week');
+    const wkTd=document.createElement('td');
+    wkTd.className='wk-cell';
+    wkTd.innerHTML='<div class="wkl">V'+isoW+'</div><div class="wks">'+fmtWkRange(mon,sunD)+'</div>';
+    tr.appendChild(wkTd);
+    for(const [dt,type,c1,c2] of week){
+      const td=document.createElement('td');
+      td.className='t-'+type;
+      td.dataset.date=dt;
+      td.onclick=()=>openSheet(dt);
+      if(dt===today) td.classList.add('today-ring');
+      const log=getLog(dt);
+      let h='';
+      if(log&&log.done) h='<span class="done-mark">\u2713</span>';
+      h+='<div class="l1">'+c1+'</div>';
+      if(c2) h+='<div class="l2">'+c2+'</div>';
+      td.innerHTML=h;
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+    shown++;
+  }
+  // Update hdr-day for today
+  const todayDay=DAYS.find(d=>d[0]===today);
+  if(todayDay) document.getElementById('hdr-day').textContent=todayDay[2];
+  // Scroll to today cell
+  const tc=document.querySelector('td[data-date="'+today+'"]');
+  if(tc) setTimeout(()=>tc.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}),350);
+}
+// ── Collect all done sessions from localStorage ────────────────────
+function getAllLogs(){
+  const logs=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(!k||!k.startsWith('L20')) continue;
+    try{
+      const log=JSON.parse(localStorage.getItem(k));
+      if(log&&log.done){
+        const raw=k.substring(1);
+        const ds=raw.length===8?raw.substring(0,4)+'-'+raw.substring(4,6)+'-'+raw.substring(6,8):raw;
+        const dayData=DAYS.find(d=>d[0]===ds)||null;
+        logs.push({dateStr:ds,log,dayData});
+      }
+    }catch(e){}
+  }
+  logs.sort((a,b)=>b.dateStr.localeCompare(a.dateStr));
+  return logs;
+}
+// ── Parse stats ────────────────────────────────────────────────────
+function computeStats(logs){
+  let kmRun=0,kmCyc=0,ergoM=0,kneMax=0,kneTot=0,otherMin=0;
+  for(const {dateStr,log,dayData} of logs){
+    const type=dayData?dayData[1]:'';
+    const act=log.actual||'';
+    if(['qual','easy','long'].includes(type)){const m=act.match(/(\d+[.,]?\d*)\s*km/i);if(m)kmRun+=parseFloat(m[1].replace(',','.'))}
+    if(type==='cycle'||/bikeerg|bike erg/i.test(act)){const m=act.match(/(\d+[.,]?\d*)\s*km/i);if(m)kmCyc+=parseFloat(m[1].replace(',','.'))}
+    if(/skierg|rowerg|ski erg|row erg/i.test(act)||/\d{3,5}\s*m\b/i.test(act)){const m=act.match(/(\d+)\s*m(?:eter)?\b/i);if(m&&parseInt(m[1])>=500)ergoM+=parseInt(m[1]);}
+    if(type==='gym'){
+      const ms=(act.match(/(\d+[.,]?\d*)\s*kg/gi)||[]).map(x=>parseFloat(x.replace(/kg/i,'').replace(',','.').trim())).filter(x=>x>=50&&x<=400);
+      if(ms.length){const mx=Math.max(...ms);if(mx>kneMax)kneMax=mx;kneTot+=mx*5*3;}
+      else if(dayData){const pm=dayData[2].match(/(\d+)\s*kg/);if(pm){const pw=parseInt(pm[1]);if(pw>=50&&pw<=400){if(pw>kneMax)kneMax=pw;kneTot+=pw*5*3;}}}
+    }
+    if(['yoga','rest'].includes(type)){const m=act.match(/(\d+)\s*min/i);if(m)otherMin+=parseInt(m[1]);}
+  }
+  return{kmRun,kmCyc,ergoM,kneMax,kneTot,otherMin,total:logs.length};
+}
+// ── Render stats cards ─────────────────────────────────────────────
+function renderStats(s){
+  function sv(id,v,u){const el=document.getElementById(id);if(!el)return;el.innerHTML=v>0?Math.round(v*10)/10+'<span class="sc-unit">'+u+'</span>':'\u2014';}
+  sv('sc-run-v',s.kmRun,'km');
+  sv('sc-cyc-v',s.kmCyc,'km');
+  const eu=s.ergoM>=1000?'km':'m';
+  sv('sc-erg-v',s.ergoM>=1000?Math.round(s.ergoM/100)/10:s.ergoM,eu);
+  const km=document.getElementById('sc-kne-max');if(km)km.innerHTML=s.kneMax>0?s.kneMax+'<span class="sc-unit">kg</span>':'\u2014';
+  const kt=document.getElementById('sc-kne-tot');if(kt)kt.innerHTML=s.kneTot>0?Math.round(s.kneTot)+'<span class="sc-unit">kg</span>':'\u2014';
+  function ft(m){if(!m||m<=0)return'\u2014';if(m<60)return m+'<span class="sc-unit">min</span>';return Math.floor(m/60)+'<span class="sc-unit">t</span>'+(m%60?'&thinsp;'+(m%60)+'<span class="sc-unit">m</span>':'');}
+  const ov=document.getElementById('sc-other-v');if(ov)ov.innerHTML=ft(s.otherMin);
+  const tv=document.getElementById('sc-total-v');if(tv)tv.textContent=s.total;
+}
+// ── Group logs by ISO week ─────────────────────────────────────────
+function groupByWeek(logs){
+  const wks={};
+  for(const item of logs){
+    const d=new Date(item.dateStr);
+    const dow=d.getDay()||7;
+    const mon=new Date(d);mon.setDate(d.getDate()-(dow-1));
+    const key=mon.toISOString().split('T')[0];
+    if(!wks[key])wks[key]=[];
+    wks[key].push(item);
+  }
+  return wks;
+}
+function shortTitle(t){return t.replace(/[^\x00-\xFF]/g,'').replace(/^\s+/,'').trim().substring(0,26);}
+// ── Render monthly view ────────────────────────────────────────────
+function renderMonthly(logs){
+  const el=document.getElementById('dagbok-monthly');if(!el)return;
+  if(!logs.length){el.innerHTML='<div class="dagbok-empty">Ingen logga \u00f8kter denne perioden.</div>';return;}
+  const wks=groupByWeek(logs);
+  const keys=Object.keys(wks).sort((a,b)=>b.localeCompare(a));
+  const DN=['Sun','Man','Tys','Ons','Tor','Fre','L\u00f8r','Sun'];
+  let html='';
+  for(const wm of keys){
+    const items=wks[wm];
+    const mon=new Date(wm);const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+    html+='<div class="hw-group"><div class="hw-head">Veke '+getISOWeek(mon)+' <span>'+fmtWkRange(mon,sun)+'</span></div><div class="hw-sessions">';
+    for(const {dateStr,log,dayData} of items.sort((a,b)=>a.dateStr.localeCompare(b.dateStr))){
+      const d=new Date(dateStr);
+      const type=dayData?dayData[1]:'rest';
+      const title=dayData?dayData[4]:log.actual||'\u00d8kt';
+      const cls='hs-card hs-'+(type==='qual'?'qual':type==='gym'?'gym':type==='cycle'?'cycle':type==='yoga'?'yoga':type==='long'?'long':'rest');
+      html+='<div class="'+cls+'" onclick="openSheet(\''+dateStr+'\')"><div class="hc-day">'+DN[d.getDay()]+'</div><div class="hc-title">'+shortTitle(title)+'</div>';
+      if(log.actual)html+='<div class="hc-meta">'+log.actual+'</div>';
+      if(log.notes)html+='<span class="hc-note">'+log.notes.substring(0,30)+'</span>';
+      html+='</div>';
+    }
+    html+='</div></div>';
+  }
+  el.innerHTML=html;
+}
+// ── Render yearly table ────────────────────────────────────────────
+function renderYearly(year,allLogs){
+  const el=document.getElementById('dagbok-yearly');if(!el)return;
+  const byMo={};
+  for(const item of allLogs){
+    if(!item.dateStr.startsWith(year))continue;
+    const mo=parseInt(item.dateStr.substring(5,7))-1;
+    if(!byMo[mo])byMo[mo]=[];
+    byMo[mo].push(item);
+  }
+  const MN=['Jan','Feb','Mar','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Des'];
+  let rows='',tot={kmRun:0,kmCyc:0,ergoM:0,kneMax:0,kneTot:0,otherMin:0,total:0};
+  for(let mo=0;mo<12;mo++){
+    if(!byMo[mo])continue;
+    const s=computeStats(byMo[mo]);
+    for(const k of Object.keys(tot)){tot[k]=k==='kneMax'?Math.max(tot[k],s[k]||0):(tot[k]||0)+(s[k]||0);}
+    const em=s.ergoM>=1000?(Math.round(s.ergoM/100)/10)+' km':s.ergoM+' m';
+    rows+='<tr><td>'+MN[mo]+'</td><td>'+s.total+'</td><td>'+Math.round(s.kmRun||0)+' km</td><td>'+Math.round(s.kmCyc||0)+' km</td><td>'+em+'</td><td>'+(s.kneMax||'\u2014')+(s.kneMax?' kg':'')+'</td></tr>';
+  }
+  if(!rows){el.innerHTML='<div class="dagbok-empty">Ingen logga \u00f8kter i '+year+'.</div>';return;}
+  const te=tot.ergoM>=1000?(Math.round(tot.ergoM/100)/10)+' km':tot.ergoM+' m';
+  el.innerHTML='<table class="yr-table"><thead><tr><th></th><th>\u00d8kter</th><th>L\u00f8p</th><th>Sykkel</th><th>Ergo</th><th>Kneb\u00f8y</th></tr></thead><tbody>'+rows+'</tbody><tfoot><tr><td>Totalt</td><td>'+tot.total+'</td><td>'+Math.round(tot.kmRun)+' km</td><td>'+Math.round(tot.kmCyc)+' km</td><td>'+te+'</td><td>'+(tot.kneMax||'\u2014')+(tot.kneMax?' kg':'')+'</td></tr></tfoot></table>';
+}
+// ── Build history UI ───────────────────────────────────────────────
+function buildHistory(){
+  const allLogs=getAllLogs();
+  const ymSet={},yearSet={};
+  for(const {dateStr} of allLogs){const y=dateStr.substring(0,4),m=dateStr.substring(5,7);ymSet[y+'-'+m]=1;yearSet[y]=1;}
+  const now=new Date();const cy=now.getFullYear().toString();const cm=(now.getMonth()+1).toString().padStart(2,'0');
+  if(!ymSet[cy+'-'+cm]){ymSet[cy+'-'+cm]=1;yearSet[cy]=1;}
+  const MFN=['','Januar','Februar','Mars','April','Mai','Juni','Juli','August','September','Oktober','November','Desember'];
+  const sel=document.getElementById('dagbok-period');if(!sel)return;
+  sel.innerHTML='';
+  const years=Object.keys(yearSet).sort((a,b)=>b-a);
+  for(const y of years){
+    const grp=document.createElement('optgroup');grp.label=y;
+    const yOpt=document.createElement('option');yOpt.value='year-'+y;yOpt.textContent='Heile '+y;grp.appendChild(yOpt);
+    const months=Object.keys(ymSet).filter(k=>k.startsWith(y)).sort((a,b)=>b.localeCompare(a));
+    for(const ym of months){const mo=parseInt(ym.substring(5,7));const opt=document.createElement('option');opt.value='month-'+ym;opt.textContent=MFN[mo]+' '+y;grp.appendChild(opt);}
+    sel.appendChild(grp);
+  }
+  // Default: most recent month
+  for(let i=0;i<sel.options.length;i++){if(!sel.options[i].value.startsWith('year-')){sel.selectedIndex=i;break;}}
+  refreshHistory();
+}
+function refreshHistory(){
+  const sel=document.getElementById('dagbok-period');if(!sel)return;
+  const val=sel.value;
+  const allLogs=getAllLogs();
+  const mv=document.getElementById('dagbok-monthly');
+  const yv=document.getElementById('dagbok-yearly');
+  if(val.startsWith('year-')){
+    const year=val.substring(5);
+    if(mv)mv.style.display='none';if(yv)yv.style.display='block';
+    renderStats(computeStats(allLogs.filter(l=>l.dateStr.startsWith(year))));
+    renderYearly(year,allLogs);
+  } else {
+    const ym=val.substring(6);
+    if(mv)mv.style.display='block';if(yv)yv.style.display='none';
+    renderStats(computeStats(allLogs.filter(l=>l.dateStr.startsWith(ym))));
+    renderMonthly(allLogs.filter(l=>l.dateStr.startsWith(ym)));
+  }
+}
+// ── "Sist oppdatert" ──────────────────────────────────────────────
+(function(){
+  const h1=document.querySelector('h1');if(!h1)return;
+  const sp=document.createElement('span');
+  sp.style.cssText='font-size:9px;font-weight:400;opacity:.38;margin-left:6px';
+  const d=new Date();
+  sp.textContent='Sist oppdatert: '+d.getDate()+'. '+MONTHS[d.getMonth()]+' '+d.getFullYear()+', kl. '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  h1.appendChild(sp);
+})();
+// ── Init ──────────────────────────────────────────────────────────
+buildCalendar();
+buildHistory();
+document.getElementById('dagbok-period')&&document.getElementById('dagbok-period').addEventListener('change',refreshHistory);
+const _tc=document.querySelector('td[data-date="'+today+'"]');
+if(_tc)setTimeout(()=>_tc.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}),350);
+
 </script>
 </body>
 </html>
