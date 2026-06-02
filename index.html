@@ -545,22 +545,33 @@ function getAllLogs(){
 // ── Parse stats ────────────────────────────────────────────────────
 function computeStats(logs){
   let kmRun=0,kmCyc=0,ergoM=0,kneMax=0,kneTot=0,otherMin=0;
-  for(const {dateStr,log,dayData} of logs){
-    const type=dayData?dayData[1]:'';
-    const act=log.actual||'';
-    if(['qual','easy','long'].includes(type)){const m=act.match(/(\d+[.,]?\d*)\s*km/i);if(m)kmRun+=parseFloat(m[1].replace(',','.'))}
-    if(type==='cycle'||/bikeerg|bike erg/i.test(act)){const m=act.match(/(\d+[.,]?\d*)\s*km/i);if(m)kmCyc+=parseFloat(m[1].replace(',','.'))}
-    if(/skierg|rowerg|ski erg|row erg/i.test(act)||/\d{3,5}\s*m\b/i.test(act)){const m=act.match(/(\d+)\s*m(?:eter)?\b/i);if(m&&parseInt(m[1])>=500)ergoM+=parseInt(m[1]);}
-    if(type==='gym'){
-      const ms=(act.match(/(\d+[.,]?\d*)\s*kg/gi)||[]).map(x=>parseFloat(x.replace(/kg/i,'').replace(',','.').trim())).filter(x=>x>=50&&x<=400);
-      if(ms.length){const mx=Math.max(...ms);if(mx>kneMax)kneMax=mx;kneTot+=mx*5*3;}
-      else if(dayData){const pm=dayData[2].match(/(\d+)\s*kg/);if(pm){const pw=parseInt(pm[1]);if(pw>=50&&pw<=400){if(pw>kneMax)kneMax=pw;kneTot+=pw*5*3;}}}
-    }
-    if(['yoga','rest'].includes(type)){const m=act.match(/(\d+)\s*min/i);if(m)otherMin+=parseInt(m[1]);}
+  for(const{dateStr,log,dayData}of logs){
+    const type=dayData?dayData[1]:(log.type||'');
+    // Explicit numeric fields (historical data) — fall back to regex for manual logs
+    if('km_run'in log) kmRun+=log.km_run||0;
+    else if(['qual','easy','long'].includes(type)){
+      const m=(log.actual||'').match(/(\d+[.,]?\d*)\s*km/i);
+      if(m)kmRun+=parseFloat(m[1].replace(',','.'));}
+    if('km_cyc'in log) kmCyc+=log.km_cyc||0;
+    else if(type==='cycle'||/bikeerg|bike erg/i.test(log.actual||'')){
+      const m=(log.actual||'').match(/(\d+[.,]?\d*)\s*km/i);
+      if(m)kmCyc+=parseFloat(m[1].replace(',','.'));}
+    if('ergo_m'in log) ergoM+=log.ergo_m||0;
+    else{const act=log.actual||'';
+      if(/skierg|rowerg|ski erg|row erg/i.test(act)){
+        const m=act.match(/(\d+)\s*m(?:eter)?/i);
+        if(m&&parseInt(m[1])>=500)ergoM+=parseInt(m[1]);}}
+    if('kg_max'in log){if((log.kg_max||0)>kneMax)kneMax=log.kg_max;}
+    else if(type==='gym'){
+      const act=log.actual||'';
+      const bsm=act.match(/BS[^\d]*(\d+(?:\.\d+)?)\s*kg/i);
+      if(bsm){const w=parseFloat(bsm[1]);if(w>kneMax)kneMax=w;}}
+        if('kg_vol'in log) kneTot+=log.kg_vol||0;
+    if('min'in log){if(type!=='qual'&&type!=='cycle')otherMin+=log.min||0;}
   }
   return{kmRun,kmCyc,ergoM,kneMax,kneTot,otherMin,total:logs.length};
 }
-// ── Render stats cards ─────────────────────────────────────────────
+
 function renderStats(s){
   function sv(id,v,u){const el=document.getElementById(id);if(!el)return;el.innerHTML=v>0?Math.round(v*10)/10+'<span class="sc-unit">'+u+'</span>':'\u2014';}
   sv('sc-run-v',s.kmRun,'km');
@@ -568,7 +579,7 @@ function renderStats(s){
   const eu=s.ergoM>=1000?'km':'m';
   sv('sc-erg-v',s.ergoM>=1000?Math.round(s.ergoM/100)/10:s.ergoM,eu);
   const km=document.getElementById('sc-kne-max');if(km)km.innerHTML=s.kneMax>0?s.kneMax+'<span class="sc-unit">kg</span>':'\u2014';
-  const kt=document.getElementById('sc-kne-tot');if(kt)kt.innerHTML=s.kneTot>0?Math.round(s.kneTot)+'<span class="sc-unit">kg</span>':'\u2014';
+  const kt=document.getElementById('sc-kne-tot');if(kt){const tv=s.kneTot;kt.innerHTML=tv>0?(tv>=1000?(Math.round(tv/100)/10)+'<span class="sc-unit">tonn</span>':Math.round(tv)+'<span class="sc-unit">kg</span>'):'\u2014';}
   function ft(m){if(!m||m<=0)return'\u2014';if(m<60)return m+'<span class="sc-unit">min</span>';return Math.floor(m/60)+'<span class="sc-unit">t</span>'+(m%60?'&thinsp;'+(m%60)+'<span class="sc-unit">m</span>':'');}
   const ov=document.getElementById('sc-other-v');if(ov)ov.innerHTML=ft(s.otherMin);
   const tv=document.getElementById('sc-total-v');if(tv)tv.textContent=s.total;
@@ -603,7 +614,8 @@ function renderMonthly(logs){
       const d=new Date(dateStr);
       const type=dayData?dayData[1]:'rest';
       const title=dayData?dayData[4]:log.actual||'\u00d8kt';
-      const cls='hs-card hs-'+(type==='qual'?'qual':type==='gym'?'gym':type==='cycle'?'cycle':type==='yoga'?'yoga':type==='long'?'long':'rest');
+      const tmap={'qual':'qual','gym':'gym','cycle':'cycle','yoga':'yoga','long':'qual','easy':'qual','rest':'rest','travel':'rest'};
+      const cls='hs-card hs-'+(tmap[type]||'rest');
       html+='<div class="'+cls+'" onclick="openSheet(\''+dateStr+'\')"><div class="hc-day">'+DN[d.getDay()]+'</div><div class="hc-title">'+shortTitle(title)+'</div>';
       if(log.actual)html+='<div class="hc-meta">'+log.actual+'</div>';
       if(log.notes)html+='<span class="hc-note">'+log.notes.substring(0,30)+'</span>';
@@ -693,6 +705,5 @@ const _tc=document.querySelector('td[data-date="'+today+'"]');
 if(_tc)setTimeout(()=>_tc.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}),350);
 
 </script>
-<script src="history.js"></script>
 </body>
 </html>
