@@ -546,7 +546,7 @@ function getAllLogs(){
 function computeStats(logs){
   let kmRun=0,kmCyc=0,ergoM=0,kneMax=0,kneTot=0,otherMin=0;
   for(const {dateStr,log,dayData} of logs){
-    const type=dayData?dayData[1]:'';
+    const type=dayData?dayData[1]:(log.type||'');
     const act=log.actual||'';
     if(['qual','easy','long'].includes(type)){const m=act.match(/(\d+[.,]?\d*)\s*km/i);if(m)kmRun+=parseFloat(m[1].replace(',','.'))}
     if(type==='cycle'||/bikeerg|bike erg/i.test(act)){const m=act.match(/(\d+[.,]?\d*)\s*km/i);if(m)kmCyc+=parseFloat(m[1].replace(',','.'))}
@@ -601,8 +601,8 @@ function renderMonthly(logs){
     html+='<div class="hw-group"><div class="hw-head">Veke '+getISOWeek(mon)+' <span>'+fmtWkRange(mon,sun)+'</span></div><div class="hw-sessions">';
     for(const {dateStr,log,dayData} of items.sort((a,b)=>a.dateStr.localeCompare(b.dateStr))){
       const d=new Date(dateStr);
-      const type=dayData?dayData[1]:'rest';
-      const title=dayData?dayData[4]:log.actual||'\u00d8kt';
+      const type=dayData?dayData[1]:(log.type||'rest');
+      const title=dayData?dayData[4]:(log.title||log.actual||'\u00d8kt');
       const cls='hs-card hs-'+(type==='qual'?'qual':type==='gym'?'gym':type==='cycle'?'cycle':type==='yoga'?'yoga':type==='long'?'long':'rest');
       html+='<div class="'+cls+'" onclick="openSheet(\''+dateStr+'\')"><div class="hc-day">'+DN[d.getDay()]+'</div><div class="hc-title">'+shortTitle(title)+'</div>';
       if(log.actual)html+='<div class="hc-meta">'+log.actual+'</div>';
