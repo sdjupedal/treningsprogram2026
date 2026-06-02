@@ -131,7 +131,7 @@ tr.cur-week .wkl{color:#1D9E75}
 .hs-yoga{background:var(--yoga-b);color:var(--yoga-f)}
 .hs-long{background:var(--long-b);color:var(--long-f)}
 .hs-rest{background:var(--rst-b);color:var(--rst-f)}
-.dagbok-empty{font-size:13px;color:var(--hi);padding:24px 0;text-align:center}
+.hist-metrics{font-size:12px;color:var(--mu);display:flex;flex-wrap:wrap;gap:4px 10px;margin:6px 0}.ds-ts{font-size:10px;color:var(--hi);margin-top:8px}.dagbok-empty{font-size:13px;color:var(--hi);padding:24px 0;text-align:center}
 .yr-table{width:100%;border-collapse:collapse;font-size:11px}
 .yr-table th{text-align:right;padding:0 0 8px 8px;font-size:10px;font-weight:500;color:var(--mu);border-bottom:.5px solid var(--brd)}
 .yr-table th:first-child{text-align:left;padding-left:0;width:60px}
@@ -390,7 +390,8 @@ DAYS.forEach(([d])=>{
 let cur=null;
 function openSheet(date){
   const day=DAYS.find(d=>d[0]===date);
-  if(!day)return;
+  document.getElementById('sh-log').style.display='';
+  if(!day){openHistSheet(date);return;}
   cur=day;
   const[d,t,c1,c2,title]=day;
   document.getElementById('sh-date').textContent=fmtDate(d);
@@ -410,7 +411,43 @@ function openSheet(date){
   document.getElementById('sheet').classList.add('on');
   document.getElementById('sh-body').scrollTop=0;
 }
+function openHistSheet(date){
+  const log=getLog(date)||{};
+  const type=log.type||'rest';
+  const title=log.title||log.actual||'Historisk økt';
+  const ed=document.getElementById('sh-date');
+  const badge=document.getElementById('sh-badge');
+  const et=document.getElementById('sh-title');
+  if(ed) ed.textContent=fmtDate(date);
+  if(badge){
+    badge.textContent=TLBL[type]||type;
+    badge.className='t-'+type;
+    badge.style.cssText='padding:3px 9px;border-radius:10px;font-size:11px;font-weight:500;';
+  }
+  if(et) et.textContent=title;
+  let html='<div class="ds">';
+  if(log.actual) html+='<p><b>Resultat:</b> '+log.actual+'</p>';
+  const M=[];
+  if(log.km_run>0) M.push(log.km_run+' km løp');
+  if(log.km_cyc>0) M.push(log.km_cyc+' km sykkel');
+  if((log.ergo_m||0)>0){const em=log.ergo_m;M.push((em>=1000?(Math.round(em/100)/10)+' km':em+' m')+' ergo');}
+  if(log.kg_max>0) M.push('Knebøy maks: '+log.kg_max+' kg');
+  if(log.kg_vol>0) M.push('BS volum: '+Math.round(log.kg_vol).toLocaleString('no')+' kg');
+  if(log.min>0){const m=log.min;M.push(m>=60?Math.floor(m/60)+'t '+(m%60)+'m':m+' min');}
+  if(M.length) html+='<p class="hist-metrics">'+M.join(' · ')+'</p>';
+  if(log.notes) html+='<p><em>'+log.notes+'</em></p>';
+  if(log.ts){const dd=new Date(log.ts);
+    const MN=['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'];
+    html+='<p class="ds-ts">'+dd.getDate()+'. '+MN[dd.getMonth()]+' '+dd.getFullYear()+'</p>';}
+  html+='</div>';
+  document.getElementById('sh-body').innerHTML=html;
+  document.getElementById('sh-log').style.display='none';
+  document.getElementById('overlay').classList.add('on');
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('sh-body').scrollTop=0;
+}
 function closeSheet(){
+  document.getElementById('sh-log').style.display='';
   document.getElementById('overlay').classList.remove('on');
   document.getElementById('sheet').classList.remove('on');
   cur=null;
