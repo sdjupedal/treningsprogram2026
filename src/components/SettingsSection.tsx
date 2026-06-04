@@ -87,6 +87,11 @@ export function SettingsSection({
     }
   }
 
+  async function clearLocal() {
+    await db.sessions.clear();
+    setMsg({ kind: "ok", text: "Lokale data tømde. Repo-data (program + historikk) er framleis lasta." });
+  }
+
   function doAIExport() {
     const brief = buildAIBrief(sessions, settings, rangeFromKey("24m", today));
     navigator.clipboard?.writeText(brief).catch(() => {});
@@ -188,6 +193,14 @@ export function SettingsSection({
       <div className="muted" style={{ fontSize: 12, marginTop: 8 }}>
         AI-eksporten lagar eit kompakt samandrag (siste 24 mnd) utan GPS-spor, klart til å lime inn i Claude.
       </div>
+
+      <hr style={{ border: "none", borderTop: "1px solid var(--border-soft)", margin: "18px 0" }} />
+
+      <h4 style={{ marginBottom: 6 }}>Lokale data</h4>
+      <div className="muted" style={{ fontSize: 12, marginBottom: 10 }}>
+        Programmet og historikken lastast automatisk frå repoet. Det du loggar eller endrar i appen ligg lokalt oppå. «Tøm lokale data» fjernar berre dei lokale endringane (repo-dataene blir verande).
+      </div>
+      <button className="danger" onClick={clearLocal}>Tøm lokale data</button>
     </section>
   );
 }

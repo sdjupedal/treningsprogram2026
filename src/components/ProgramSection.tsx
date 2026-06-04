@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import type { Session } from "../types";
-import { db, bulkPutSessions, putSession, deleteSession } from "../db/db";
-import { parseProgram, EXAMPLE_PROGRAM } from "../lib/program";
+import { putSession, deleteSession } from "../db/db";
+import { exportProgramJson } from "../lib/program";
+import { triggerDownload } from "../lib/ical";
 import { toISODate, dayNameShort } from "../lib/format";
 import { SessionCell } from "./SessionCell";
 import { SessionEditor, emptySession } from "./SessionEditor";
@@ -19,18 +20,24 @@ function mondayOf(d: Date): Date {
 
 export function ProgramSection({ sessions, today }: { sessions: Session[]; today: string }) {
   const [editing, setEditing] = useState<Session | null>(null);
-  const [showImport, setShowImport] = useState(false);
-  const [importText, setImportText] = useState("");
-  const [importMsg, setImportMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState<string | null>(null);
 
   const startMonday = useMemo(() => mondayOf(new Date(today)), [today]);
 
+  const weekCount = useMemo(() => {
+    let maxIso = today;
+    for (const s of sessions) {
+      if (s.status === "planned" && s.date > maxIso) maxIso = s.date;
+    }
+    const diffDays = Math.round((new Date(maxIso + "T00:00:00").getTime() - startMonday.getTime()) / DAY_MS);
+    return Math.min(16, Math.max(8, Math.ceil((diffDays + 1) / 7)));
+  }, [sessions, startMonday, today]);
+
   const weeks = useMemo(() => {
     const arr: { weekIdx: number; days: { iso: string; date: Date }[] }[] = [];
-    for (let w = 0; w < 8; w++) {
+    for (let w = 0; w < weekCount; w++) {
       const days: { iso: string; date: Date }[] = [];
       for (let d = 0; d < 7; d++) {
         const date = new Date(startMonday.getTime() + (w * 7 + d) * DAY_MS);
@@ -39,7 +46,7 @@ export function ProgramSection({ sessions, today }: { sessions: Session[]; today
       arr.push({ weekIdx: w, days });
     }
     return arr;
-  }, [startMonday]);
+  }, [startMonday, weekCount]);
 
   const byDate = useMemo(() => {
     const m = new Map<string, Session[]>();
@@ -50,24 +57,11 @@ export function ProgramSection({ sessions, today }: { sessions: Session[]; today
     return m;
   }, [sessions]);
 
-  async function handleImport() {
-    try {
-      const parsed = parseProgram(JSON.parse(importText));
-      // remove existing planned sessions in the imported window, then add
-      const dates = new Set(parsed.sessions.map((s) => s.date));
-      const existing = await db.sessions
-        .where("status")
-        .equals("planned")
-        .toArray();
-      const toDelete = existing.filter((s) => dates.has(s.date)).map((s) => s.id);
-      await db.sessions.bulkDelete(toDelete);
-      await bulkPutSessions(parsed.sessions);
-      setImportMsg({ kind: "ok", text: `Importerte ${parsed.sessions.length} økter over ${parsed.weekCount} veker.` });
-      setImportText("");
-      setShowImport(false);
-    } catch (e) {
-      setImportMsg({ kind: "err", text: (e as Error).message });
-    }
+  function exportProgram() {
+    const planned = sessions.filter((s) => s.status === "planned");
+    const json = exportProgramJson(planned);
+    const blob = new Blob([json], { type: "application/json" });
+    triggerDownload(blob, "program.json");
   }
 
   async function onDrop(targetIso: string) {
@@ -91,36 +85,16 @@ export function ProgramSection({ sessions, today }: { sessions: Session[]; today
     <section className="panel hero">
       <div className="panel-head">
         <h2>Planlagt treningsprogram</h2>
-        <span className="sub">8 veker fram</span>
+        <span className="sub">{weekCount} veker fram</span>
         <span className="spacer" />
-        <button className="small ghost" onClick={() => setShowImport((v) => !v)}>
-          Importer program (JSON)
+        <button className="small ghost" onClick={exportProgram}>
+          Last ned program.json
         </button>
       </div>
 
-      {importMsg && (
-        <div className={`notice ${importMsg.kind === "ok" ? "ok" : "err"}`}>{importMsg.text}</div>
-      )}
-
-      {showImport && (
-        <div className="field">
-          <label>Lim inn program-JSON</label>
-          <textarea
-            rows={8}
-            className="mono"
-            value={importText}
-            onChange={(e) => setImportText(e.target.value)}
-            placeholder={EXAMPLE_PROGRAM}
-          />
-          <div className="row" style={{ marginTop: 8 }}>
-            <button className="primary small" onClick={handleImport}>Importer</button>
-            <button className="ghost small" onClick={() => setImportText(EXAMPLE_PROGRAM)}>Døme</button>
-            <span className="faint" style={{ fontSize: 12 }}>
-              Eksisterande planlagde økter på dei same datoane blir erstatta.
-            </span>
-          </div>
-        </div>
-      )}
+      <div className="notice" style={{ background: "var(--surface-2)", border: "1px solid var(--border-soft)" }}>
+        Programmet kjem frå <span className="mono">data/program.json</span> i repoet. For å endre det: chat med Claude i samtalen «Treningsprogram - Økter», få oppdatert <span className="mono">program.json</span>, og commit fila. Endringar du gjer her i appen er lokale.
+      </div>
 
       <div style={{ marginBottom: 14 }}>
         <Legend />
