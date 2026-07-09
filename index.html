@@ -1,13 +1,485 @@
-<!doctype html>
-<html lang="nn">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0a0c0f" />
-    <title>HYBRID 7r</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Trening">
+<title>Treningsprogram 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#fff;--sur:#f6f5f0;--brd:rgba(0,0,0,.09);--tx:#1a1a1a;--mu:#666;--hi:#aaa;
+  --gym-b:#B5D4F4;--gym-f:#0C447C;--qual-b:#F5C4B3;--qual-f:#712B13;
+  --easy-b:#C0DD97;--easy-f:#27500A;--cyc-b:#9FE1CB;--cyc-f:#085041;
+  --yoga-b:#CECBF6;--yoga-f:#3C3489;--long-b:#FAC775;--long-f:#412402;
+  --b2b-b:#F4C0D1;--b2b-f:#72243E;--tap-b:#E6F1FB;--tap-f:#185FA5;
+  --tst-b:#EF9F27;--tst-f:#412402;--evt-b:#1D9E75;--evt-f:#E1F5EE;
+  --rst-b:#F1EFE8;--rst-f:#888;--trv-b:#B4B2A9;--trv-f:#3C3C3A;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1e;--sur:#2c2c2e;--brd:rgba(255,255,255,.09);--tx:#f2f2f7;--mu:#aeaeb2;--hi:#636366;
+  --gym-b:#185FA5;--gym-f:#E6F1FB;--qual-b:#8B3515;--qual-f:#FAECE7;
+  --easy-b:#2D5A0A;--easy-f:#C0DD97;--cyc-b:#0B5E48;--cyc-f:#9FE1CB;
+  --yoga-b:#44409F;--yoga-f:#CECBF6;--long-b:#5A3206;--long-f:#FAC775;
+  --b2b-b:#681C36;--b2b-f:#F4C0D1;--tap-b:#0A3A6E;--tap-f:#85B7EB;
+  --tst-b:#EF9F27;--tst-f:#412402;--evt-b:#1D9E75;--evt-f:#E1F5EE;
+  --rst-b:#2a2a2a;--rst-f:#888;--trv-b:#4a4a4a;--trv-f:#ccc;
+}}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;font-size:14px}
+body{overflow-x:hidden}
+#app{padding-bottom:calc(env(safe-area-inset-bottom,16px)+16px)}
+header{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:.5px solid var(--brd);padding:calc(env(safe-area-inset-top,0px)+10px) 16px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+h1{font-size:17px;font-weight:600;flex-shrink:0}
+#hdr-day{font-size:11px;padding:3px 9px;border-radius:12px;background:var(--sur);color:var(--mu);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%}
+#cal-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;font-size:10.5px;line-height:1.3;width:max-content;min-width:100%}
+th{padding:5px 3px;font-size:9.5px;font-weight:500;color:var(--mu);background:var(--sur);border:.5px solid var(--brd);text-align:center;white-space:nowrap}
+th:first-child{text-align:left;padding-left:8px;min-width:82px;width:82px}
+td{padding:4px 5px;vertical-align:top;border:.5px solid var(--brd);cursor:pointer;min-width:82px;width:82px}
+td:active{opacity:.7}
+.wk-cell{cursor:default;background:var(--sur)!important}
+.l1{font-weight:500;font-size:10.5px;margin-bottom:1px;white-space:normal;word-break:break-word}
+.l2{font-size:9.5px;opacity:.88;white-space:normal;word-break:break-word}
+.wkl{font-weight:500;font-size:10.5px;color:var(--tx);margin-bottom:2px}
+.wks{font-size:9px;color:var(--hi)}
+.today-ring{outline:2px solid var(--tx);outline-offset:-2px;border-radius:2px}
+.done-mark{float:right;font-size:9px;margin-top:1px;margin-left:2px}
+.t-gym{background:var(--gym-b);color:var(--gym-f)}
+.t-qual{background:var(--qual-b);color:var(--qual-f)}
+.t-easy{background:var(--easy-b);color:var(--easy-f)}
+.t-cycle{background:var(--cyc-b);color:var(--cyc-f)}
+.t-yoga{background:var(--yoga-b);color:var(--yoga-f)}
+.t-long{background:var(--long-b);color:var(--long-f)}
+.t-b2b{background:var(--b2b-b);color:var(--b2b-f)}
+.t-taper{background:var(--tap-b);color:var(--tap-f)}
+.t-test{background:var(--tst-b);color:var(--tst-f)}
+.t-event{background:var(--evt-b);color:var(--evt-f)}
+.t-rest{background:var(--rst-b);color:var(--rst-f)}
+.t-travel{background:var(--trv-b);color:var(--trv-f)}
+#legend{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px;font-size:10px;color:var(--mu)}
+#legend span{display:flex;align-items:center;gap:3px}
+.ld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20}
+#overlay.on{display:block}
+#sheet{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--bg);border-radius:16px 16px 0 0;max-height:88vh;display:flex;flex-direction:column;transform:translateY(101%);transition:transform .32s cubic-bezier(.32,1.1,.32,1)}
+#sheet.on{transform:translateY(0)}
+.handle{width:36px;height:4px;background:var(--brd);border-radius:2px;margin:12px auto 0;flex-shrink:0}
+#sh-hdr{padding:12px 16px 10px;flex-shrink:0;border-bottom:.5px solid var(--brd)}
+#sh-date{font-size:12px;color:var(--mu);margin-bottom:3px}
+#sh-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#sh-badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:10px;white-space:nowrap}
+#sh-title{font-size:17px;font-weight:600;line-height:1.3}
+#sh-body{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;padding:0 16px}
+.ds{padding:11px 0;border-bottom:.5px solid var(--brd)}
+.ds:last-child{border-bottom:none}
+.ds h3{font-size:13px;font-weight:600;margin-bottom:5px}
+.ds p{font-size:13px;line-height:1.55;color:var(--mu);margin-bottom:3px}
+.ds p:last-child{margin-bottom:0}
+.ds ul{font-size:13px;line-height:1.6;color:var(--mu);padding-left:18px;margin:3px 0}
+.cue{font-style:italic;font-size:12px!important;color:var(--hi)!important}
+#sh-log{padding:12px 16px;border-top:.5px solid var(--brd);flex-shrink:0;background:var(--sur);padding-bottom:calc(env(safe-area-inset-bottom,0px)+12px)}
+#sh-log h4{font-size:13px;font-weight:600;margin-bottom:8px}
+.lgrow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.lgrow label{font-size:13px;color:var(--tx);flex:1}
+.lgrow input[type=checkbox]{width:20px;height:20px;accent-color:#1D9E75;flex-shrink:0}
+#lg-act,#lg-nts{width:100%;border:.5px solid var(--brd);border-radius:8px;padding:8px 10px;font-size:13px;background:var(--bg);color:var(--tx);margin-bottom:8px;font-family:inherit}
+#lg-nts{height:62px;resize:none}
+.btnrow{display:flex;gap:8px}
+.btn{flex:1;padding:11px;border-radius:10px;font-size:14px;font-weight:500;border:none;cursor:pointer;-webkit-appearance:none}
+.bsv{background:#1D9E75;color:#fff}
+.bex{background:var(--brd);color:var(--tx);font-size:13px}
+.btn:active{opacity:.75}
+#descs{display:none}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Treningsprogram 2026 <span style="font-size:9px;font-weight:400;opacity:.45;margin-left:4px;">oppdatert 2. jun</span></h1>
+    <div id="hdr-day"></div>
+  </header>
+  <div id="cal-wrap">
+    <table>
+      <thead><tr>
+        <th>Veke</th>
+        <th>Man</th><th>Tir</th><th>Ons</th>
+        <th>Tor</th><th>Fre</th><th>Lør</th><th>Sun</th>
+      </tr></thead>
+      <tbody>
+<tr>
+<td class="wk-cell"><div class="wkl">1.–7. jun</div><div class="wks">Inneverande veke</div></td>
+<td class="t-rest" data-date="2026-06-01" onclick="openSheet('2026-06-01')"><div class="l1">Kvile ✓</div></td>
+<td class="t-qual" data-date="2026-06-02" onclick="openSheet('2026-06-02')"><div class="l1">🏃🏼‍♂️‍➡️ 20×400m @3:42–3:48</div><div class="l2">p:45sek / Sone 3–4</div></td>
+<td class="t-gym" data-date="2026-06-03" onclick="openSheet('2026-06-03')"><div class="l1">💪🏼 BS 5×5 @170 kg</div><div class="l2">EMOM15: 8 PU / 6–8 Bench @100</div></td>
+<td class="t-yoga" data-date="2026-06-04" onclick="openSheet('2026-06-04')"><div class="l1">🧘🏼 Yoga / mob</div></td>
+<td class="t-rest" data-date="2026-06-05" onclick="openSheet('2026-06-05')"><div class="l1">Kvile / reise</div></td>
+<td class="t-qual" data-date="2026-06-06" onclick="openSheet('2026-06-06')"><div class="l1">🏃🏼‍♂️‍➡️ Langtur 18–20 km</div><div class="l2">Sone 1–2 / roleg</div></td>
+<td class="t-rest" data-date="2026-06-07" onclick="openSheet('2026-06-07')"><div class="l1">Kvile</div></td>
+</tr>
+<tr>
+<td class="wk-cell"><div class="wkl">8.–14. jun</div><div class="wks">Taper + reise</div></td>
+<td class="t-rest" data-date="2026-06-08" onclick="openSheet('2026-06-08')"><div class="l1">Reisedag Oslo</div><div class="l2">lett jogg 25 min</div></td>
+<td class="t-qual" data-date="2026-06-09" onclick="openSheet('2026-06-09')"><div class="l1">🏃🏼‍♂️‍➡️ Hotel: jogg 30 min</div><div class="l2">lett bench + PU</div></td>
+<td class="t-qual" data-date="2026-06-10" onclick="openSheet('2026-06-10')"><div class="l1">🏃🏼‍♂️‍➡️ Hotel: jogg 30 min</div><div class="l2">lett bench + PU</div></td>
+<td class="t-rest" data-date="2026-06-11" onclick="openSheet('2026-06-11')"><div class="l1">Reisedag</div><div class="l2">jogg / kvile</div></td>
+<td class="t-rest" data-date="2026-06-12" onclick="openSheet('2026-06-12')"><div class="l1">KVILE</div><div class="l2">reise + fest</div></td>
+<td class="t-qual" data-date="2026-06-13" onclick="openSheet('2026-06-13')"><div class="l1">🏃🏼‍♂️‍➡️ Langtur 18–20 km</div><div class="l2">Sone 1 (&lt;133 bpm)</div></td>
+<td class="t-rest" data-date="2026-06-14" onclick="openSheet('2026-06-14')"><div class="l1">Full kvile</div></td>
+</tr>
+<tr>
+<td class="wk-cell"><div class="wkl">15.–21. jun</div><div class="wks">Test + gjenopphenting</div></td>
+<td class="t-qual" data-date="2026-06-15" onclick="openSheet('2026-06-15')"><div class="l1">🏃🏼‍♂️‍➡️ Aktivering 25 min</div><div class="l2">4×100m strides</div></td>
+<td class="t-rest" data-date="2026-06-16" onclick="openSheet('2026-06-16')"><div class="l1">KVILE</div></td>
+<td class="t-qual" data-date="2026-06-17" onclick="openSheet('2026-06-17')"><div class="l1">🏃🏼‍♂️‍➡️ ★ 3000M TEST</div><div class="l2">mål: 11:00–11:15</div></td>
+<td class="t-yoga" data-date="2026-06-18" onclick="openSheet('2026-06-18')"><div class="l1">🧘🏼 Recovery</div><div class="l2">yoga / gange</div></td>
+<td class="t-qual" data-date="2026-06-19" onclick="openSheet('2026-06-19')"><div class="l1">🏃🏼‍♂️‍➡️ Lett jogg 25 min</div><div class="l2">+ lett bench/PU</div></td>
+<td class="t-cycle" data-date="2026-06-20" onclick="openSheet('2026-06-20')"><div class="l1">🚴🏼 Sykkel 50 km</div><div class="l2">/ jogg 12 km Sone 1</div></td>
+<td class="t-rest" data-date="2026-06-21" onclick="openSheet('2026-06-21')"><div class="l1">Aktiv kvile</div></td>
+</tr>
+<tr>
+<td class="wk-cell"><div class="wkl">22.–28. jun</div><div class="wks">V1 — Restart</div></td>
+<td class="t-gym" data-date="2026-06-22" onclick="openSheet('2026-06-22')"><div class="l1">💪🏼 BS 5×5 @165 kg</div><div class="l2">EMOM15: 8 PU / 6–8 Bench @95</div></td>
+<td class="t-qual" data-date="2026-06-23" onclick="openSheet('2026-06-23')"><div class="l1">🏃🏼‍♂️‍➡️ Lett jogg 35 min</div><div class="l2">Sone 1</div></td>
+<td class="t-qual" data-date="2026-06-24" onclick="openSheet('2026-06-24')"><div class="l1">🏃🏼‍♂️‍➡️ 6×4 min @4:10–4:13</div><div class="l2">p:2 min / Sone 3–4</div></td>
+<td class="t-yoga" data-date="2026-06-25" onclick="openSheet('2026-06-25')"><div class="l1">🧘🏼 Yoga / mob</div></td>
+<td class="t-gym" data-date="2026-06-26" onclick="openSheet('2026-06-26')"><div class="l1">💪🏼 BS 4-3-2-1 → 185 kg</div><div class="l2">Bench 4×5 @110 + PU ×maks</div></td>
+<td class="t-cycle" data-date="2026-06-27" onclick="openSheet('2026-06-27')"><div class="l1">🚴🏼 Gravel 80–100 km</div><div class="l2">Sone 1–3</div></td>
+<td class="t-qual" data-date="2026-06-28" onclick="openSheet('2026-06-28')"><div class="l1">🏃🏼‍♂️‍➡️ Langjogg 18–20 km</div><div class="l2">Sone 1–2</div></td>
+</tr>
+<tr>
+<td class="wk-cell"><div class="wkl">29 jun–5 jul</div><div class="wks">V2 — Bygging</div></td>
+<td class="t-gym" data-date="2026-06-29" onclick="openSheet('2026-06-29')"><div class="l1">💪🏼 BS 5×5 @170 kg</div><div class="l2">EMOM15: 8 PU / 6–8 Bench @100</div></td>
+<td class="t-qual" data-date="2026-06-30" onclick="openSheet('2026-06-30')"><div class="l1">🏃🏼‍♂️‍➡️ 10×1000m @4:05–4:10</div><div class="l2">p:1 min / Sone 3–4</div></td>
+<td class="t-qual" data-date="2026-07-01" onclick="openSheet('2026-07-01')"><div class="l1">🏃🏼‍♂️‍➡️ Lett jogg 30 min</div><div class="l2">Sone 1</div></td>
+<td class="t-yoga" data-date="2026-07-02" onclick="openSheet('2026-07-02')"><div class="l1">🧘🏼 Yoga / mob</div></td>
+<td class="t-gym" data-date="2026-07-03" onclick="openSheet('2026-07-03')"><div class="l1">💪🏼 BS 4-3-2-1 → 190 kg</div><div class="l2">Bench 4×5 @112,5 + PU ×maks</div></td>
+<td class="t-cycle" data-date="2026-07-04" onclick="openSheet('2026-07-04')"><div class="l1">🚴🏼 Gravel 100–120 km</div><div class="l2">Sone 2</div></td>
+<td class="t-qual" data-date="2026-07-05" onclick="openSheet('2026-07-05')"><div class="l1">🏃🏼‍♂️‍➡️ Langjogg 22 km</div><div class="l2">S1–2 m/terreng</div></td>
+</tr>
+<tr>
+<td class="wk-cell"><div class="wkl">6.–12. jul</div><div class="wks">V3 — Hardanger-prep</div></td>
+<td class="t-gym" data-date="2026-07-06" onclick="openSheet('2026-07-06')"><div class="l1">💪🏼 BS 5×5 @172,5 kg</div><div class="l2">EMOM15: 8 PU / 6–8 Bench @102,5</div></td>
+<td class="t-qual" data-date="2026-07-07" onclick="openSheet('2026-07-07')"><div class="l1">🏃🏼‍♂️‍➡️ 5×8 min @4:10–4:15</div><div class="l2">p:2 min / Sone 3–4</div></td>
+<td class="t-rest" data-date="2026-07-08" onclick="openSheet('2026-07-08')"><div class="l1">Aktiv kvile</div></td>
+<td class="t-yoga" data-date="2026-07-09" onclick="openSheet('2026-07-09')"><div class="l1">🧘🏼 Yoga / mob</div></td>
+<td class="t-gym" data-date="2026-07-10" onclick="openSheet('2026-07-10')"><div class="l1">💪🏼 BS 4-3-2-1 → 192,5 kg</div><div class="l2">Bench 4×5 @115 + PU ×maks</div></td>
+<td class="t-qual" data-date="2026-07-11" onclick="openSheet('2026-07-11')"><div class="l1">🏃🏼‍♂️‍➡️ Terrengjogg 25 km</div><div class="l2">m/sekk 6 kg / Sone 1–2</div></td>
+<td class="t-cycle" data-date="2026-07-12" onclick="openSheet('2026-07-12')"><div class="l1">🚴🏼 Gravel 70 km</div><div class="l2">Sone 1–2</div></td>
+</tr>
+<tr>
+<td class="wk-cell"><div class="wkl">13.–19. jul</div><div class="wks">V4 — Siste harde veke</div></td>
+<td class="t-gym" data-date="2026-07-13" onclick="openSheet('2026-07-13')"><div class="l1">💪🏼 BS 5×5 @175 kg</div><div class="l2">EMOM15: 8 PU / 6–8 Bench @105</div></td>
+<td class="t-qual" data-date="2026-07-14" onclick="openSheet('2026-07-14')"><div class="l1">🏃🏼‍♂️‍➡️ 3×3000m @4:00–4:05</div><div class="l2">p:3 min / Sone 4</div></td>
+<td class="t-rest" data-date="2026-07-15" onclick="openSheet('2026-07-15')"><div class="l1">Aktiv kvile</div></td>
+<td class="t-yoga" data-date="2026-07-16" onclick="openSheet('2026-07-16')"><div class="l1">🧘🏼 Yoga</div><div class="l2">start nedtrapping</div></td>
+<td class="t-gym" data-date="2026-07-17" onclick="openSheet('2026-07-17')"><div class="l1">💪🏼 BS 3×3 @165 kg</div><div class="l2">Bench 3×5 @100 + PU lett</div></td>
+<td class="t-qual" data-date="2026-07-18" onclick="openSheet('2026-07-18')"><div class="l1">🏃🏼‍♂️‍➡️ Terrengjogg 20 km</div><div class="l2">m/sekk 8 kg / Sone 1–2</div></td>
+<td class="t-cycle" data-date="2026-07-19" onclick="openSheet('2026-07-19')"><div class="l1">🚴🏼 Gravel 40–50 km</div><div class="l2">Sone 1</div></td>
+</tr>
+<tr>
+<td class="wk-cell"><div class="wkl">20.–26. jul</div><div class="wks">Taper</div></td>
+<td class="t-gym" data-date="2026-07-20" onclick="openSheet('2026-07-20')"><div class="l1">💪🏼 BS 3×5 @155 kg</div><div class="l2">E2OM10: 8 PU / 5 Bench @95</div></td>
+<td class="t-qual" data-date="2026-07-21" onclick="openSheet('2026-07-21')"><div class="l1">🏃🏼‍♂️‍➡️ 4×3 min @4:10</div><div class="l2">p:2 min + strides / Sone 3</div></td>
+<td class="t-cycle" data-date="2026-07-22" onclick="openSheet('2026-07-22')"><div class="l1">🚴🏼 Lett sykkel 30 min</div><div class="l2">aktiv kvile</div></td>
+<td class="t-yoga" data-date="2026-07-23" onclick="openSheet('2026-07-23')"><div class="l1">🧘🏼 Yoga / mob</div></td>
+<td class="t-qual" data-date="2026-07-24" onclick="openSheet('2026-07-24')"><div class="l1">🏃🏼‍♂️‍➡️ Lett jogg 20 min</div></td>
+<td class="t-qual" data-date="2026-07-25" onclick="openSheet('2026-07-25')"><div class="l1">🏃🏼‍♂️‍➡️ Fjelltur 15 km</div><div class="l2">m/sekk Sone 1</div></td>
+<td class="t-rest" data-date="2026-07-26" onclick="openSheet('2026-07-26')"><div class="l1">KVILE</div></td>
+</tr>
+<tr>
+<td class="wk-cell"><div class="wkl">27 jul–1 aug</div><div class="wks">Event!</div></td>
+<td class="t-qual" data-date="2026-07-27" onclick="openSheet('2026-07-27')"><div class="l1">🏃🏼‍♂️‍➡️ Lett jogg 20 min</div><div class="l2">aktiv kvile</div></td>
+<td class="t-yoga" data-date="2026-07-28" onclick="openSheet('2026-07-28')"><div class="l1">🧘🏼 Yoga / pakking</div></td>
+<td class="t-rest" data-date="2026-07-29" onclick="openSheet('2026-07-29')"><div class="l1">Reise til start</div><div class="l2">kvile</div></td>
+<td class="t-qual" data-date="2026-07-30" onclick="openSheet('2026-07-30')"><div class="l1">🏃🏼‍♂️‍➡️ HARDANGERVIDDA</div><div class="l2">DAG 1 — 30. jul</div></td>
+<td class="t-qual" data-date="2026-07-31" onclick="openSheet('2026-07-31')"><div class="l1">🏃🏼‍♂️‍➡️ HARDANGERVIDDA</div><div class="l2">DAG 2 — 31. jul</div></td>
+<td class="t-qual" data-date="2026-08-01" onclick="openSheet('2026-08-01')"><div class="l1">🏃🏼‍♂️‍➡️ HARDANGERVIDDA</div><div class="l2">DAG 3 — 1. aug</div></td>
+<td class="t-rest" data-date="2026-08-02" onclick="openSheet('2026-08-02')"><div class="l1">Kvile etter event</div></td>
+</tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="legend">
+    <span><span class="ld t-gym"></span>💪🏼 Styrke</span>
+    <span><span class="ld t-qual"></span>🏃🏼&#x200D;♂️&#x200D;➡️ Løping</span>
+    <span><span class="ld t-cycle"></span>🚴🏼 Sykkel</span>
+    <span><span class="ld t-yoga"></span>🧘🏼 Yoga/mob</span>
+    <span><span class="ld t-rest"></span>Kvile</span>
+  </div>
+</div>
+
+<div id="overlay" onclick="closeSheet()"></div>
+<div id="sheet">
+  <div class="handle"></div>
+  <div id="sh-hdr">
+    <div id="sh-date"></div>
+    <div id="sh-row">
+      <span id="sh-badge"></span>
+      <span id="sh-title"></span>
+    </div>
+  </div>
+  <div id="sh-body"></div>
+  <div id="sh-log">
+    <h4>Logg</h4>
+    <div class="lgrow">
+      <label for="lg-dn">Gjennomførd</label>
+      <input type="checkbox" id="lg-dn">
+    </div>
+    <input id="lg-act" placeholder="Faktisk vekt / tid / pace...">
+    <textarea id="lg-nts" placeholder="Notat om kjenslene, form, PR..."></textarea>
+    <div class="btnrow">
+      <button class="btn bsv" id="btn-save" onclick="saveLog()">Lagre</button>
+      <button class="btn bex" onclick="exportICS()">→ Kalender</button>
+    </div>
+  </div>
+</div>
+
+<div id="descs">
+<div id="d20260601"><div class="ds"><h3>Aktiv kvile</h3><p>Støle bein etter terrengløp (30. mai) og Row Tabata (31. mai). Gå ein tur, strekk litt — ingen strukturert trening i dag. Bruk dagen til å kvile, ete bra og bu deg til intervallane i morgon.</p></div></div>
+<div id="d20260602"><div class="ds"><h3>Formål</h3><p>Akkumulere volum på 3000m-tempo. Intensiteten er Sone 3–4 — ikkje eit fartsdrag, men ein uthaldsspesifikk intervalløkt. Snitt-puls vil klatre gradvis; siste 5–6 drag kan nå Sone 4–5 som biprodukt av opphopa trettleik, ikkje som mål.</p></div><div class="ds"><h3>Oppvarming — 15 min</h3><p>10 min roleg jogg + 4×80m progressive strides med full pause. Siste stride på 3000m-tempo.</p></div><div class="ds"><h3>Hovudøkt: 20×400m</h3><ul><li>Tempo: <strong>3:42–3:48 min/km</strong> (400m på 1:29–1:31)</li><li>Pause: 45 sek roleg gange mellom (arbeidsforhold 2:1)</li><li>Start kontrollert på 3:48, bygg mot 3:42 på siste drag</li><li>Siste 5 drag skal svi skikkeleg</li></ul><p class="cue">Dreg du for fort tidleg, betaler du på drag 14–20. Kjør etter klokka.</p></div><div class="ds"><h3>Nedkøyring — 10 min</h3><p>Roleg jogg + lett tøying</p></div></div>
+<div id="d20260603"><div class="ds"><h3>Oppvarming — 10 min</h3><p>Lett bevegelse, 5 luftknebøy, 10 hip circle, band pull-apart. Oppvarmingssett: 60 kg×8, 100 kg×5.</p></div><div class="ds"><h3>Del A — Back Squat 5×5</h3><p>Vekt: <strong>170 kg</strong> — Texas Method volumdag</p><ul><li>5 sett × 5 reps @ 170 kg</li><li>Pause: 3–4 min mellom sett</li></ul><p class="cue">Send knea utover, bryst opp. Dette er volumdagen — hold att på temptasjonen til å gå tyngre.</p></div><div class="ds"><h3>Del B — Alt EMOM 15 min</h3><ul><li>Odd-minutt (1,3,5...): 8 Strict Pull-ups — full ROM, skygg ned heilt</li><li>Even-minutt (2,4,6...): 8 Bench Press @ 100 kg — ned 2 sek kontrollert</li></ul><p>Totalt: 8 runder PU + 7 runder Bench</p></div></div>
+<div id="d20260604"><div class="ds"><h3>Fokus: patellarsena</h3><ul><li>Quad-tøying stående: 3×60 sek kvar side</li><li>VMO-aktivering med band (terminal knee ext): 3×15</li><li>Hoftefleksor kneelande lunge: 2 min kvar side</li><li>Pigeon pose: 2 min kvar side</li><li>IT-band rullmassasje om du har skumrulle</li></ul></div><div class="ds"><h3>Resten</h3><ul><li>Thorax: book opener, cat-cow</li><li>Anklar: squat sit 2 min</li><li>Skuldre: wrist circles, band stretch</li></ul></div></div>
+<div id="d20260605"><div class="ds"><h3>Reisedag</h3><p>Ingen planlagt trening. Om du har høve og energi: 15 min lett gange.</p></div></div>
+<div id="d20260606"><div class="ds"><h3>Pre-taper langtur</h3><p>Veka har vore høg i volum (to intervalløkter, to knebøyøkter, 70 km sykkel). Dette er den siste ordentlege langturen før testen 17. juni. Hald det roleg — dette er ikkje ein prestasjonsøkt.</p><ul><li>18–20 km, Sone 1–2</li><li>Snitt-puls under 156 bpm</li><li>Tempo: det som kjennest naturleg, truleg 5:20–5:50/km</li><li>Ta med gel om du er ute over 80 min</li></ul></div></div>
+<div id="d20260607"><div class="ds"><h3>Kvile</h3><p>Tung veke + langtur i går. Full kvile i dag.</p></div></div>
+<div id="d20260608"><div class="ds"><h3>Lett jogg — 25 min</h3><p>Viss mogleg — Sone 1, under 133 bpm. Reisedag, ikkje overdriv.</p></div></div>
+<div id="d20260609"><div class="ds"><h3>Løping ute — 30 min</h3><p>Roleg tempo Sone 1–2, flat rute. Under <strong>133 bpm</strong> snitt.</p></div><div class="ds"><h3>Hotellgym (valfritt)</h3><ul><li>Bench press 3×5 @ lett vekt</li><li>Pull-ups / lat pulldown 3×8</li></ul><p class="cue">Du er i taperingsfase. Bevar rørslemønsteret, ikkje slite deg ut.</p></div></div>
+<div id="d20260610"><div class="ds"><h3>Løping ute — 30 min</h3><p>Same som i går: Sone 1–2, under 133 bpm. Om beina kjennest friske: 6×1 min litt raskare med 2 min roleg mellom — ikkje meir.</p></div><div class="ds"><h3>Hotellgym (valfritt)</h3><ul><li>Bench 3×5, pull-ups 3×maks</li></ul></div></div>
+<div id="d20260611"><div class="ds"><h3>20 min lett jogg eller kvile</h3><p>Viss logistikken tillet det. Ingenting av dette er obligatorisk.</p></div></div>
+<div id="d20260612"><div class="ds"><h3>Ingen trening i dag</h3><p>Reisedag tilbake til Oslo + jobb-fest om kvelden. Langtur 22 km i morgon — du treng friskheten meir enn ei ekstra økt. Et godt, drikk roleg.</p></div></div>
+<div id="d20260613"><div class="ds"><h3>Siste langtur før test</h3><p>Redusert frå 22 til 18–20 km — veka 2. juni var høgare i volum enn planlagt. Prioriter å kome til startstreken 17. juni med friske bein.</p><ul><li>Sone 1, under 133 bpm snitt</li><li>Samtaletempto heile vegen</li><li>Gel om du er ute over 80 min</li></ul><p class="cue">Om pulsen kryp over 133: slow down, ikkje prøv å halde tempoet.</p></div></div>
+<div id="d20260614"><div class="ds"><h3>Full kvile</h3><p>Du er no inn i den siste taperfasen mot 3000m-testen. Spis bra, sov.</p></div></div>
+<div id="d20260615"><div class="ds"><h3>Aktivering</h3><ul><li>20 min roleg jogg @ Sone 1</li><li>4×100m strides med gradvis auke mot 3000m-tempo — full pause mellom</li></ul><p class="cue">Formålet er å halde beina vakne, ikkje slite dei ut. Strides skal kjennast lette og sprette.</p></div></div>
+<div id="d20260616"><div class="ds"><h3>Full kvile</h3><p>Komplett kvile. Viss beina kjennest stive: 10 min svært roleg jogg, ingen strides. Hald deg unna langt ståing og gåing. Legg deg tidleg.</p></div></div>
+<div id="d20260617"><div class="ds"><h3>Oppvarming — 20 min</h3><ul><li>15 min roleg jogg</li><li>4–6×100m strides, siste 2 på testfart</li></ul></div><div class="ds"><h3>Pacingstrategi</h3><ul><li><strong>0–400m: 3:42/km</strong> — kontrollert start</li><li><strong>400m–2000m: 3:38–3:42/km</strong> — finn rytmen</li><li><strong>2000m–2600m: hald</strong></li><li><strong>2600m–3000m: alt du har</strong></li></ul><p class="cue">VO2Max 60 tilseier at 11:00 er konservativt. Start kontrollert og bygg.</p></div><div class="ds"><h3>Mål: konservativt 11:05 / realistisk 10:55 / optimistisk 10:50</h3></div></div>
+<div id="d20260618"><div class="ds"><h3>Dagen etter testen</h3><p>30 min yoga — hofter, bein og rygg. Gå ein roleg tur. Ingen løping i dag.</p></div></div>
+<div id="d20260619"><div class="ds"><h3>Løp 25 min</h3><p>Roleg jogg, Sone 1, under 133 bpm.</p></div><div class="ds"><h3>Lett overkropp (valfritt)</h3><ul><li>Bench 3×5 @ 95 kg</li><li>Pull-ups 3×maks</li></ul></div></div>
+<div id="d20260620"><div class="ds"><h3>Sykkel 50 km eller jogg 12 km</h3><p>Vel etter kjenslene. Sone 1–2, roleg, lett. Første ordentlege dag med litt volum etter testen.</p></div></div>
+<div id="d20260621"><div class="ds"><h3>Roleg dag</h3><p>Gange, yoga, eller komplett kvile. Veke 1 av byggeblokken startar i morgon.</p></div></div>
+<div id="d20260622"><div class="ds"><h3>Del A — BS 5×5 @ 165 kg</h3><ul><li>5 sett × 5 reps, pause 3–4 min</li><li>Parallelt djup — ikkje ATG enno</li></ul></div><div class="ds"><h3>Del B — EMOM 15 min</h3><ul><li>Odd: 8 Strict Pull-ups</li><li>Even: 6–8 Bench @ 95 kg (bruk 6 om det er tungt)</li></ul></div></div>
+<div id="d20260623"><div class="ds"><h3>35 min Sone 1</h3><p>Under 133 bpm. Berre bevege seg og gjenopprette aerob base etter taperveka.</p></div></div>
+<div id="d20260624"><div class="ds"><h3>Formål</h3><p>Terskelintervall — hald tempoet høgt nok til at det gjer vondt, men jamt nok til at alle 6 drag er like gode. Basert på 20×400m 2. juni: tempo justert opp frå 4:12–4:18.</p></div><div class="ds"><h3>Oppvarming — 15 min</h3><p>Roleg jogg + 3 strides</p></div><div class="ds"><h3>6×4 min @ 4:10–4:13/km</h3><ul><li>Pause: 2 min roleg jogg</li><li>Sone 3–4, HR 156–175 bpm</li><li>Om drag 1–2 kjennest for harde: slakk til 4:13–4:15</li></ul></div><div class="ds"><h3>Nedkøyring — 10 min</h3></div></div>
+<div id="d20260625"><div class="ds"><h3>45 min</h3><ul><li>Hofter og hamstrings etter løpsveka</li><li>Thorax-rotasjon</li><li>Ankelmobilitet</li><li>Skulder og bryst</li></ul></div></div>
+<div id="d20260626"><div class="ds"><h3>Del A — Back Squat 4-3-2-1</h3><ul><li>4 reps @ 155 kg</li><li>3 reps @ 165 kg</li><li>2 reps @ 175 kg</li><li>1 rep @ 185 kg</li><li>Pause: 3–4 min</li></ul></div><div class="ds"><h3>Del B — Bench Press 4×5 @ 110 kg</h3><ul><li>Pause: 2–3 min mellom sett</li></ul></div><div class="ds"><h3>Del C — Strict Pull-ups 4×maks</h3><ul><li>4 sett til teknisk failure, 2 min pause</li></ul></div></div>
+<div id="d20260627"><div class="ds"><h3>Gravel — Sone 1–3</h3><ul><li>Distanse: 80–100 km etter dagsform</li><li>Spis kvar 45 min, 60–80g karb/time</li><li>Sone 1–2 mesteparten, Sone 3 i motbakkar</li></ul></div></div>
+<div id="d20260628"><div class="ds"><h3>Lang roleg jogg</h3><ul><li>Distanse: 18–20 km</li><li>Puls: Sone 1–2 (under 156 bpm)</li><li>Forventa tempo: 5:20–5:50/km</li><li>Gel/mat om du er ute over 80 min</li></ul><p class="cue">Aerob byggjestein for Hardangervidda. Ikkje press.</p></div></div>
+<div id="d20260629"><div class="ds"><h3>Del A — Back Squat 5×5</h3><p>Vekt: <strong>170 kg</strong> (+2,5 kg frå sist)</p><ul><li>5 sett × 5 reps, pause 3–4 min</li></ul></div><div class="ds"><h3>Del B — Alt EMOM 15 min</h3><ul><li>Odd: 8 Strict Pull-ups</li><li>Even: 8 Bench Press @ 100 kg</li></ul></div></div>
+<div id="d20260630"><div class="ds"><h3>Formål</h3><p>Tung terskelvolumøkt — 10 km på terskel/VO2max-tempo er den tøffaste løpeøkta i V2. Tempo justert opp basert på 20×400m 2. juni og 6×4 min 24. juni. Juster ned om 24. juni var hard.</p></div><div class="ds"><h3>Oppvarming — 15 min</h3><p>Roleg jogg + 4 strides</p></div><div class="ds"><h3>10×1000m @ 4:05–4:10/km</h3><ul><li>Pause: 1 min mellom</li><li>Sone 3–4, HR 156–175</li><li>Snitt over heile seansen: Sone 3</li><li>Siste 2–3 drag: 4:05 om du har det igjen</li></ul></div><div class="ds"><h3>Nedkøyring — 10 min</h3></div></div>
+<div id="d20260701"><div class="ds"><h3>30 min roleg</h3><p>Lett jogg, sykkel eller gange. Sone 1. Ingen press etter 10×1000m i går.</p></div></div>
+<div id="d20260702"><div class="ds"><h3>45 min</h3><p>Fokus: bein og hofter etter tunge dagar (knebøy + 10 km intervall). Pigeon, lizard, hamstrings, bryst.</p></div></div>
+<div id="d20260703"><div class="ds"><h3>Del A — Back Squat 4-3-2-1</h3><ul><li>4 reps @ 157,5 kg</li><li>3 reps @ 167,5 kg</li><li>2 reps @ 177,5 kg</li><li>1 rep @ 190 kg</li></ul></div><div class="ds"><h3>Del B — Bench Press 4×5 @ 112,5 kg</h3></div><div class="ds"><h3>Del C — Strict Pull-ups 4×maks</h3></div></div>
+<div id="d20260704"><div class="ds"><h3>Sone 2 — aerob bygging</h3><ul><li>Distanse: 100–120 km</li><li>Sone 2 (137–156 bpm) mesteparten</li><li>Spis kvar 45 min, drikk jamt</li></ul></div></div>
+<div id="d20260705"><div class="ds"><h3>22 km med terreng</h3><ul><li>Finn ein rute med noko stigning</li><li>Sone 1–2, under 156 bpm</li><li>Gel kvar 7–8 km</li></ul><p class="cue">Kjenn kva som skjer i beina etter ein høg sykkeldag. Det er denne adaptasjonen som tel mot Hardangervidda.</p></div></div>
+<div id="d20260706"><div class="ds"><h3>Del A — Back Squat 5×5</h3><p>Vekt: <strong>172,5 kg</strong></p><ul><li>5 sett × 5 reps, pause 3–4 min</li></ul></div><div class="ds"><h3>Del B — Alt EMOM 15 min</h3><ul><li>Odd: 8 Strict Pull-ups</li><li>Even: 8 Bench Press @ 102,5 kg</li></ul></div></div>
+<div id="d20260707"><div class="ds"><h3>Oppvarming — 15 min</h3><p>Roleg jogg + 3 strides</p></div><div class="ds"><h3>Hovudøkt: 4×8 min</h3><ul><li>Tempo: <strong>4:10–4:15 min/km</strong></li><li>Puls: Sone 3–4, terskel</li><li>Pause: 2 min roleg mellom</li></ul><p class="cue">Lengre drag enn 4×4 — finn ein jamn rytme og hald han. HR kryp naturleg opp gjennom kvart drag.</p></div></div>
+<div id="d20260708"><div class="ds"><h3>Kvile</h3><p>Spar energi til helgas langdistanse. Lett gange eller yoga.</p></div></div>
+<div id="d20260709"><div class="ds"><h3>Yoga / mob — 45 min</h3><ul><li>Hofter og bein</li><li>Rygg og thorax (toleranse for ryggsekk)</li><li>Anklar og kjernar</li></ul></div></div>
+<div id="d20260710"><div class="ds"><h3>Del A — Back Squat 4-3-2-1</h3><ul><li>4 reps @ 160 kg</li><li>3 reps @ 170 kg</li><li>2 reps @ 180 kg</li><li>1 rep @ 192,5 kg</li></ul></div><div class="ds"><h3>Del B — Bench Press 4×5 @ 115 kg</h3></div><div class="ds"><h3>Del C — Strict Pull-ups 4×maks</h3></div></div>
+<div id="d20260711"><div class="ds"><h3>Terrengjogg 25 km — langdistansehelg dag 1</h3><p>Første av to samanhengande aktive dagar — kjernen i Hardangervidda-forberedinga. Spar litt; du skal ut i morgon òg.</p><ul><li>Ryggsekk: <strong>6 kg</strong></li><li>Sone 1–2, under 156 bpm snitt</li><li>40–60g karbohydrat/time</li></ul></div></div>
+<div id="d20260712"><div class="ds"><h3>Gravel 70 km — langdistansehelg dag 2</h3><p>Dagen etter terrengjogg. Formålet er å trene kroppen til å prestere under kumulativ trettleik — akkurat det Hardangervidda krev. Bein kjenst stive; det er heile poenget.</p><ul><li>Sone 1–2, ikkje pres farten</li></ul></div></div>
+<div id="d20260713"><div class="ds"><h3>Del A — Back Squat 5×5</h3><p>Vekt: <strong>175 kg</strong> — siste volumdag</p><ul><li>5 sett × 5 reps, pause 3–4 min</li></ul></div><div class="ds"><h3>Del B — Alt EMOM 15 min</h3><ul><li>Odd: 8 Strict Pull-ups</li><li>Even: 8 Bench Press @ 105 kg</li></ul></div></div>
+<div id="d20260714"><div class="ds"><h3>Oppvarming — 15 min</h3><p>Roleg jogg + 4 strides</p></div><div class="ds"><h3>Hovudøkt: 3×3000m</h3><ul><li>Tempo: <strong>4:00–4:05 min/km</strong></li><li>Pause: 3 min roleg mellom</li><li>HR: Sone 4 (165–175 bpm)</li></ul><p class="cue">Raskaste løpeøkt i programmet. Kjenn at løpefarten er på plass etter langdistansehelgane.</p></div></div>
+<div id="d20260715"><div class="ds"><h3>Mjuk dag</h3><p>Lett gange, roleg strekk. Ingenting intenst i dag.</p></div></div>
+<div id="d20260716"><div class="ds"><h3>45 min — siste harde veke er bak deg</h3><p>Full kroppsgjennomgang. Nedtrappinga startar no. Kjenn på kva som treng ekstra merksemd.</p></div></div>
+<div id="d20260717"><div class="ds"><h3>Nedtrapping — lett styrke</h3><p>Nedtrappingsøkt. Vekta er redusert med vilje — hald rørslemønsteret i live utan å skape trettleik før Hardangervidda.</p></div><div class="ds"><h3>Del A — BS 3×3 @ 165 kg</h3><p>Lett og kontrollert.</p></div><div class="ds"><h3>Del B — Bench 3×5 @ 100 kg + PU 3×8</h3><p>Ikkje til failure.</p></div></div>
+<div id="d20260718"><div class="ds"><h3>Terrengjogg 20 km — siste langdistansehelg dag 1</h3><p>Tyngste sekk i heile programmet (8 kg). Etter denne er du klar — det som følgjer er berre nedtrapping og vedlikehald.</p><ul><li>Ryggsekk: <strong>8 kg</strong></li><li>Sone 1–2</li></ul></div></div>
+<div id="d20260719"><div class="ds"><h3>Gravel 40–50 km — langdistansehelg dag 2</h3><p>Dagen etter tung terrengjogg. Rul lett — beina kjennest tunge, og det er normalt. Sone 1 heile vegen.</p></div></div>
+<div id="d20260720"><div class="ds"><h3>Nedtrapping — lett styrke</h3><p>Nedtrappingsveke. Vekta er klart redusert — nok til å halde muskulaturen aktiv, ikkje nok til å skape DOMS eller trettleik. 10 dagar til Hardangervidda start.</p></div><div class="ds"><h3>Del A — BS 3×5 @ 155 kg</h3></div><div class="ds"><h3>Del B — E2OM 10 min</h3><ul><li>8 Strict Pull-ups</li><li>5 Bench Press @ 95 kg</li></ul><p>5 runder, lett og kontrollert.</p></div></div>
+<div id="d20260721"><div class="ds"><h3>Hald farten i beina</h3><ul><li>4×3 min @ 4:10/km, pause 2 min</li><li>Deretter: 4×100m strides på full fart</li></ul><p class="cue">Siste gangane du køyrer intervall. Formål: nevromuskulær fart — ikkje slite deg ut.</p></div></div>
+<div id="d20260722"><div class="ds"><h3>30 min roleg sykkel</h3><p>Sone 1. Svett, men ikkje sliten.</p></div></div>
+<div id="d20260723"><div class="ds"><h3>60 min — grundig gjennomgang</h3><p>Full kroppsgjennomgang. Særleg hofter, rygg og skuldre (for sekk-bering). Pust og ro ned nervesystemet.</p></div></div>
+<div id="d20260724"><div class="ds"><h3>Siste løpedagen</h3><p>20 min svært roleg jogg, Sone 1. Flat, kjent rute. Ingenting nytt i dag.</p></div></div>
+<div id="d20260725"><div class="ds"><h3>Siste ryggsekk-tur</h3><ul><li>Distanse: 15 km med sekk (6–8 kg)</li><li>Terreng om mogleg</li><li>Sone 1 — svært roleg</li><li>Test mat og utstyr du skal ha på Hardangervidda</li></ul></div></div>
+<div id="d20260726"><div class="ds"><h3>Ingenting</h3><p>Full kviledagen. Du er klar.</p></div></div>
+<div id="d20260727"><div class="ds"><h3>20 min roleg jogg eller gange</h3><p>Hald kroppen varm og bevegelig utan å tappe noko. Pakk sekken.</p></div></div>
+<div id="d20260728"><div class="ds"><h3>Yoga 30 min</h3><p>Roleg strekk. Kjenn deg frisk og klar.</p></div><div class="ds"><h3>Pakkeliste</h3><ul><li>Mat for 3 dagar (kaloririktig)</li><li>Klede og regntøy</li><li>Kart, kompass, nødsutstyr</li><li>Test at sekken sit bra</li></ul></div></div>
+<div id="d20260729"><div class="ds"><h3>Reisedag</h3><p>Kom deg til startpunktet. Spis godt, drikk godt, sov tidleg.</p></div></div>
+<div id="d20260730"><div class="ds"><h3>DAG 1 — Hardangervidda</h3><ul><li>Hald Sone 1–2 tidleg i dagen — start ikkje for fort</li><li>Spis og drikk FØR du er svolt/tørst</li><li>Ta aktive pausar, ikkje berre når du er sliten</li></ul><p class="cue">Vêret og terrenget bestemmer. Ver smart, ikkje tøff.</p></div></div>
+<div id="d20260731"><div class="ds"><h3>DAG 2 — Hardangervidda</h3><ul><li>Den hardaste dagen psykologisk</li><li>Spis godt om morgonen — kroppen er sliten</li><li>Langdistansetrening har budd deg på dette</li></ul></div></div>
+<div id="d20260801"><div class="ds"><h3>DAG 3 — mål i sikte</h3><ul><li>Du er der. Kjenn at treningsblokken har gitt deg dette.</li><li>Hald att tidleg — sparar du energi kjem du sterkare inn</li></ul></div></div>
+<div id="d20260802"><div class="ds"><h3>Gratulerer!</h3><p>Full kviledagen. Et bra, sov, nyt kjenslene. Du har fullført.</p></div></div>
+</div>
+
+<script>
+const DAYS = [
+  ['2026-06-01','rest','Kvile ✓','','Kviledag'],
+  ['2026-06-02','qual','🏃🏼‍♂️‍➡️ 20×400m @3:42–3:48','p:45sek / Sone 3–4','20×400m — 3000m spesifikk'],
+  ['2026-06-03','gym','💪🏼 BS 5×5 @170 kg','EMOM15: 8 PU / 6–8 Bench @100','Styrke — Volumdag'],
+  ['2026-06-04','yoga','🧘🏼 Yoga / mob','','Yoga og mobilitet'],
+  ['2026-06-05','rest','Kvile / reise','','Reisedag'],
+  ['2026-06-06','qual','💪🏼 BS 4-3-2-1 → 175 kg','Bench 3×5 @110 + Erg 3×5min','Styrke — Intensitetsdag + Erg'],
+  ['2026-06-07','rest','Kvile','','Roleg cardio'],
+  ['2026-06-08','rest','Reisedag Oslo','lett jogg 25 min','Reisedag + lett jogg'],
+  ['2026-06-09','qual','🏃🏼‍♂️‍➡️ Hotel: jogg 30 min','lett bench + PU','Hotelløkt — roleg'],
+  ['2026-06-10','qual','🏃🏼‍♂️‍➡️ Hotel: jogg 30 min','lett bench + PU','Hotelløkt — roleg'],
+  ['2026-06-11','rest','Reisedag','jogg / kvile','Reisedag'],
+  ['2026-06-12','rest','KVILE','reise + fest','Kviledag — fest på jobben'],
+  ['2026-06-13','qual','🏃🏼‍♂️‍➡️ Langtur 18–20 km','Sone 1 (<133 bpm)','Langtur 22 km — Sone 1'],
+  ['2026-06-14','rest','Full kvile','','Full kvile'],
+  ['2026-06-15','qual','🏃🏼‍♂️‍➡️ Aktivering 25 min','4×100m strides','Aktivering — pre-test'],
+  ['2026-06-16','rest','KVILE','','Kvile — dagen før test'],
+  ['2026-06-17','qual','🏃🏼‍♂️‍➡️ ★ 3000M TEST','mål: 11:00–11:15','3000m Test — mål 11:00–11:15'],
+  ['2026-06-18','yoga','🧘🏼 Recovery','yoga / gange','Recovery — yoga og gange'],
+  ['2026-06-19','qual','🏃🏼‍♂️‍➡️ Lett jogg 25 min','+ lett bench/PU','Lett løp + lett styrke'],
+  ['2026-06-20','cycle','🚴🏼 Sykkel 50 km','/ jogg 12 km Sone 1','Roleg sykkel eller jogg'],
+  ['2026-06-21','rest','Aktiv kvile','','Aktiv kvile'],
+  ['2026-06-22','gym','💪🏼 BS 5×5 @165 kg','EMOM15: 8 PU / 6–8 Bench @95','V1 — Styrke Volumdag'],
+  ['2026-06-23','qual','🏃🏼‍♂️‍➡️ Lett jogg 35 min','Sone 1','Lett jogg'],
+  ['2026-06-24','qual','🏃🏼‍♂️‍➡️ 6×4 min @4:10–4:13','p:2 min / Sone 3–4','6×4 min terskel'],
+  ['2026-06-25','yoga','🧘🏼 Yoga / mob','','Yoga og mobilitet'],
+  ['2026-06-26','gym','💪🏼 BS 4-3-2-1 → 185 kg','Bench 4×5 @110 + PU ×maks','V1 — Styrke Intensitetsdag'],
+  ['2026-06-27','cycle','🚴🏼 Gravel 80–100 km','Sone 1–3','Gravel 80–100 km'],
+  ['2026-06-28','qual','🏃🏼‍♂️‍➡️ Langjogg 18–20 km','Sone 1–2','Langjogg 18–20 km'],
+  ['2026-06-29','gym','💪🏼 BS 5×5 @170 kg','EMOM15: 8 PU / 6–8 Bench @100','V2 — Styrke Volumdag'],
+  ['2026-06-30','qual','🏃🏼‍♂️‍➡️ 10×1000m @4:05–4:10','p:1 min / Sone 3–4','10×1000m terskel'],
+  ['2026-07-01','qual','🏃🏼‍♂️‍➡️ Lett jogg 30 min','Sone 1','Aktiv kvile'],
+  ['2026-07-02','yoga','🧘🏼 Yoga / mob','','Yoga og mobilitet'],
+  ['2026-07-03','gym','💪🏼 BS 4-3-2-1 → 190 kg','Bench 4×5 @112,5 + PU ×maks','V2 — Styrke Intensitetsdag'],
+  ['2026-07-04','cycle','🚴🏼 Gravel 100–120 km','Sone 2','Lang gravel — 100–120 km'],
+  ['2026-07-05','qual','🏃🏼‍♂️‍➡️ Langjogg 22 km','S1–2 m/terreng','Langjogg 22 km — terreng'],
+  ['2026-07-06','gym','💪🏼 BS 5×5 @172,5 kg','EMOM15: 8 PU / 6–8 Bench @102,5','V3 — Styrke Volumdag'],
+  ['2026-07-07','qual','🏃🏼‍♂️‍➡️ 5×8 min @4:10–4:15','p:2 min / Sone 3–4','4×8 min terskel'],
+  ['2026-07-08','rest','Aktiv kvile','','Aktiv kvile'],
+  ['2026-07-09','yoga','🧘🏼 Yoga / mob','','Yoga og mobilitet'],
+  ['2026-07-10','gym','💪🏼 BS 4-3-2-1 → 192,5 kg','Bench 4×5 @115 + PU ×maks','V3 — Styrke Intensitetsdag'],
+  ['2026-07-11','qual','🏃🏼‍♂️‍➡️ Terrengjogg 25 km','m/sekk 6 kg / Sone 1–2','Langdistansehelg dag 1 — Terrengjogg 25 km'],
+  ['2026-07-12','cycle','🚴🏼 Gravel 70 km','Sone 1–2','Langdistansehelg dag 2 — Gravel 70 km'],
+  ['2026-07-13','gym','💪🏼 BS 5×5 @175 kg','EMOM15: 8 PU / 6–8 Bench @105','V4 — Styrke Volumdag'],
+  ['2026-07-14','qual','🏃🏼‍♂️‍➡️ 3×3000m @4:00–4:05','p:3 min / Sone 4','3×3000m'],
+  ['2026-07-15','rest','Aktiv kvile','','Aktiv kvile'],
+  ['2026-07-16','yoga','🧘🏼 Yoga','start nedtrapping','Yoga — start nedtrapping'],
+  ['2026-07-17','gym','💪🏼 BS 3×3 @165 kg','Bench 3×5 @100 + PU lett','Taper — lett styrke'],
+  ['2026-07-18','qual','🏃🏼‍♂️‍➡️ Terrengjogg 20 km','m/sekk 8 kg / Sone 1–2','Langdistansehelg dag 1 — Terrengjogg 20 km'],
+  ['2026-07-19','cycle','🚴🏼 Gravel 40–50 km','Sone 1','Langdistansehelg dag 2 — Gravel 40–50 km'],
+  ['2026-07-20','gym','💪🏼 BS 3×5 @155 kg','E2OM10: 8 PU / 5 Bench @95','Taper — styrke lett'],
+  ['2026-07-21','qual','🏃🏼‍♂️‍➡️ 4×3 min @4:10','p:2 min + strides / Sone 3','Kvalitet + strides'],
+  ['2026-07-22','cycle','🚴🏼 Lett sykkel 30 min','aktiv kvile','Lett sykkel — aktiv kvile'],
+  ['2026-07-23','yoga','🧘🏼 Yoga / mob','','Yoga og mobilitet — grundig'],
+  ['2026-07-24','qual','🏃🏼‍♂️‍➡️ Lett jogg 20 min','','Lett jogg 20 min'],
+  ['2026-07-25','qual','🏃🏼‍♂️‍➡️ Fjelltur 15 km','m/sekk Sone 1','Fjelltur 15 km — siste prep'],
+  ['2026-07-26','rest','KVILE','','Full kvile'],
+  ['2026-07-27','qual','🏃🏼‍♂️‍➡️ Lett jogg 20 min','aktiv kvile','Lett jogg + kvile'],
+  ['2026-07-28','yoga','🧘🏼 Yoga / pakking','','Yoga og pakking'],
+  ['2026-07-29','rest','Reise til start','kvile','Reise til Hardangervidda'],
+  ['2026-07-30','qual','🏃🏼‍♂️‍➡️ HARDANGERVIDDA','DAG 1 — 30. jul','Hardangervidda — DAG 1'],
+  ['2026-07-31','qual','🏃🏼‍♂️‍➡️ HARDANGERVIDDA','DAG 2 — 31. jul','Hardangervidda — DAG 2'],
+  ['2026-08-01','qual','🏃🏼‍♂️‍➡️ HARDANGERVIDDA','DAG 3 — 1. aug','Hardangervidda — DAG 3'],
+  ['2026-08-02','rest','Kvile etter event','','Kvile — etter Hardangervidda']
+];
+const TLBL = {
+  gym:'Styrke/gym',qual:'Kvalitetsløp',easy:'Lett løp/erg',cycle:'Sykkel',
+  yoga:'Yoga/mob',long:'Langtur',b2b:'Langdistansehelg',
+  test:'Test',event:'Hardangervidda',rest:'Kvile',travel:'Reise/kvile'
+};
+const MONTHS = ['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'];
+function fmtDate(d) {
+  const[y,m,dd]=d.split('-');
+  return parseInt(dd)+'. '+MONTHS[parseInt(m)-1]+' '+y;
+}
+
+// ── Today ──────────────────────────────────────────────────────────────────
+const today = new Date().toISOString().split('T')[0];
+const todayCell = document.querySelector(`td[data-date="${today}"]`);
+if(todayCell) {
+  todayCell.classList.add('today-ring');
+  const todayDay = DAYS.find(d=>d[0]===today);
+  if(todayDay) document.getElementById('hdr-day').textContent = todayDay[2];
+  setTimeout(()=>todayCell.scrollIntoView({behavior:'smooth',block:'center',inline:'center'}),400);
+}
+
+// ── Restore logged marks ──────────────────────────────────────────────────
+function getLog(date){try{return JSON.parse(localStorage.getItem('L'+date));}catch{return null;}}
+function setLog(date,data){localStorage.setItem('L'+date,JSON.stringify(data));}
+DAYS.forEach(([d])=>{
+  const log=getLog(d);
+  if(log&&log.done){
+    const td=document.querySelector(`td[data-date="${d}"]`);
+    if(td&&!td.querySelector('.done-mark')){
+      const sp=document.createElement('span');
+      sp.className='done-mark';sp.textContent='✓';
+      td.insertBefore(sp,td.firstChild);
+    }
+  }
+});
+
+// ── Sheet ─────────────────────────────────────────────────────────────────
+let cur=null;
+function openSheet(date){
+  const day=DAYS.find(d=>d[0]===date);
+  if(!day)return;
+  cur=day;
+  const[d,t,c1,c2,title]=day;
+  document.getElementById('sh-date').textContent=fmtDate(d);
+  const badge=document.getElementById('sh-badge');
+  badge.textContent=TLBL[t]||t;
+  badge.className='t-'+t;
+  badge.style.cssText='padding:3px 9px;border-radius:10px;font-size:11px;font-weight:500;';
+  document.getElementById('sh-title').textContent=title;
+  const key='d'+d.replace(/-/g,'');
+  const descEl=document.getElementById(key);
+  document.getElementById('sh-body').innerHTML=descEl?descEl.innerHTML:'<div class="ds"><p>Ingen beskriving funne.</p></div>';
+  const log=getLog(d)||{};
+  document.getElementById('lg-dn').checked=!!log.done;
+  document.getElementById('lg-act').value=log.actual||'';
+  document.getElementById('lg-nts').value=log.notes||'';
+  document.getElementById('overlay').classList.add('on');
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('sh-body').scrollTop=0;
+}
+function closeSheet(){
+  document.getElementById('overlay').classList.remove('on');
+  document.getElementById('sheet').classList.remove('on');
+  cur=null;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();});
+
+// ── Log ───────────────────────────────────────────────────────────────────
+function saveLog(){
+  if(!cur)return;
+  const d=cur[0];
+  const data={done:document.getElementById('lg-dn').checked,actual:document.getElementById('lg-act').value,notes:document.getElementById('lg-nts').value,ts:new Date().toISOString()};
+  setLog(d,data);
+  const td=document.querySelector(`td[data-date="${d}"]`);
+  if(td){
+    const old=td.querySelector('.done-mark');
+    if(old)old.remove();
+    if(data.done){const sp=document.createElement('span');sp.className='done-mark';sp.textContent='✓';td.insertBefore(sp,td.firstChild);}
+  }
+  const btn=document.getElementById('btn-save');
+  btn.textContent='Lagra ✓';
+  setTimeout(()=>btn.textContent='Lagre',1800);
+}
+
+// ── iCal export ───────────────────────────────────────────────────────────
+function exportICS(){
+  if(!cur)return;
+  const[d,t,c1,c2,title]=cur;
+  const log=getLog(d)||{};
+  const dt=d.replace(/-/g,'');
+  const nextDay=new Date(d);nextDay.setDate(nextDay.getDate()+1);
+  const dt2=nextDay.toISOString().split('T')[0].replace(/-/g,'');
+  const esc=s=>(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+  const summary=log.actual?esc(title+' ('+log.actual+')'):esc(title);
+  const parts=[c2];
+  if(log.actual)parts.push('Faktisk: '+log.actual);
+  if(log.notes)parts.push('Notat: '+log.notes);
+  const descStr=esc(parts.filter(Boolean).join(' | '));
+  const ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Treningsprogram 2026//NO\r\nBEGIN:VEVENT\r\n'
+    +'DTSTART;VALUE=DATE:'+dt+'\r\n'
+    +'DTEND;VALUE=DATE:'+dt2+'\r\n'
+    +'SUMMARY:'+summary+'\r\n'
+    +'DESCRIPTION:'+descStr+'\r\n'
+    +'UID:tp2026-'+dt+'@treningsprogram\r\n'
+    +'STATUS:CONFIRMED\r\nTRANSP:TRANSPARENT\r\nEND:VEVENT\r\nEND:VCALENDAR';
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='trening_'+d+'.ics';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
+}
+</script>
+</body>
 </html>
